@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+    <!-- CSS -->
+    <!-- <link rel='stylesheet' type='text/css' media='screen' href='main.css'> -->
+
+    <!-- Vue -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- <script src="https://unpkg.com/vue"></script> -->
+
+    <!-- Bootstrap -->
+    <!-- Load required Bootstrap and BootstrapVue CSS -->
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" />
+
+    <!-- Load polyfills to support older browsers -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver" crossorigin="anonymous"></script>
+
+    <!-- Load Vue followed by BootstrapVue -->
+    <script src="https://unpkg.com/vue@latest/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
+
+    <!-- Load the following for BootstrapVueIcons support -->
+    <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue-icons.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+    <b-container class="bv-example-row">
+        <b-alert show>{{ message }}</b-alert>
+
+    <b-row>
+
+        <!-- Frend List -->
+        <b-col cols="3">
+            <frend-list 
+                v-for="item in frendsList" 
+                v-bind:frend="item"
+                v-bind:key="item.id">
+            </frend-list>
+        </b-col>
+
+        <!-- Msg List -->
+        <b-col cols="9">
+        <div>
+            <msg-list 
+                v-for="item in msgs" 
+                v-bind:msg="item"
+                v-bind:key="item.id">
+            </msg-list>
+        </div>
+        </b-col>
+
+    </b-row>
+
+    </b-container>
+    </div>
+
+ 
+
+</body>
+
+    <!-- JS -->
+    <script src='main.js'></script>
+
+</html>
