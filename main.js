@@ -1,6 +1,8 @@
 const DB_NAME = 'msgdb';
 const DB_VERSION = 1;
 
+const MY_NAME = 'I am';
+
 Vue.component('frend-list', {
     props: ['frend'],
     template: '<b-button v-on:click="app.getMsgsFrom(event, frend.id)" block>{{ frend.name }}</b-button>'
@@ -19,7 +21,8 @@ var app = new Vue({
       msgs: [],
       db:null,
       ready:false,
-      addDisabled:false
+      addDisabled:false,
+      frend: ''
     },
     async created() {
         this.db = await this.getDb();
@@ -32,7 +35,8 @@ var app = new Vue({
             console.log(event.target.textContent, id)
             //this.addFrend(event.target.textContent);
             //this.deleteFrend(id);
-            this.addMsg('Hi!', 'Bob')
+            //this.addMsg('Hi!', 'I am')
+            this.frend = event.target.textContent;
         },
 
         // Работа с БД
@@ -59,8 +63,8 @@ var app = new Vue({
             let msg = {
               datetime: nowStr,
               text: text,
-              from: from,
-              class: "text-left"
+              from: from
+              //class: "text-left"
             };
             console.log('Add msg to DB: '+JSON.stringify(msg));
             await this.addMsgToDb(msg);
@@ -148,6 +152,11 @@ var app = new Vue({
               store.openCursor().onsuccess = e => {
                 let cursor = e.target.result;
                 if (cursor) {
+                  if (cursor.value.from != MY_NAME) {
+                    cursor.value.class = "text-left"
+                  } else {
+                    cursor.value.class = "text-right"
+                  }
                   msgs.push(cursor.value)
                   cursor.continue();
                 }
