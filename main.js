@@ -19,6 +19,7 @@ var app = new Vue({
       message: 'WEB-RTC msg in Vue!',
       frendsList: [],
       msgs: [],
+      sendMsgText: '',
       db:null,
       ready:false,
       addDisabled:false,
@@ -30,6 +31,12 @@ var app = new Vue({
         this.ready = true;
     },
     methods: {
+        sendMsg: async function () {
+          this.addMsg(this.sendMsgText, 'I am', this.frend);
+          this.sendMsgText = '';
+          this.msgs = await this.getMsgsFromDb(this.frend);
+        },
+
         getMsgsFrom: async function (event, id) {
             console.log(event.target.textContent, id)
             //this.addFrend(event.target.textContent);
