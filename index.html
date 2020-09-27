@@ -32,8 +32,7 @@
 <body>
     <div id="app">
     <b-container class="bv-example-row">
-        <b-alert show>Msgs from {{ frend }}</b-alert>
-
+        <b-alert show>Web-RTC msgs v 1.0</b-alert>
     <b-row>
 
         <!-- Frend List -->
@@ -47,13 +46,34 @@
 
         <!-- Msg List -->
         <b-col cols="9">
-        <div>
+        <div v-if="frend">
+            <b-alert show>Msgs from {{ frend }}</b-alert>
             <msg-list 
                 v-for="item in msgs" 
                 v-bind:msg="item"
                 v-bind:key="item.id">
             </msg-list>
         </div>
+
+        <!-- Start msg -->
+        <div v-else>
+            <div>
+                <b-jumbotron bg-variant="light" text-variant="dark" border-variant="dark">
+                  <template v-slot:header>Web-RTC messenger</template>
+              
+                  <template v-slot:lead>
+                    This messenger work on Web-RTC technology.
+                  </template>
+              
+                  <hr class="my-4">
+              
+                  <p>
+                    <b-link href="https://webrtc.org/">More about Web-RTC</b-link>
+                  </p>
+                </b-jumbotron>
+              </div>              
+        </div>
+        
         </b-col>
 
     </b-row>

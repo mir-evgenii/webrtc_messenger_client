@@ -10,7 +10,7 @@ Vue.component('frend-list', {
 
 Vue.component('msg-list', {
     props: ['msg'],
-    template: '<b-card class="mb-2" :class="msg.class" :header="msg.from" header-tag="header" :footer="msg.datetime" footer-tag="footer" title="Title"><b-card-text>{{ msg.text }}</b-card-text></b-card>'
+    template: '<b-card class="mb-2" :class="msg.class" :header="msg.from" header-tag="header" :footer="msg.datetime" footer-tag="footer"><b-card-text>{{ msg.text }}</b-card-text></b-card>'
 })
 
 var app = new Vue({
@@ -22,21 +22,24 @@ var app = new Vue({
       db:null,
       ready:false,
       addDisabled:false,
-      frend: ''
+      frend:false
     },
     async created() {
         this.db = await this.getDb();
         this.frendsList = await this.getFrendsFromDb();
-        this.msgs = await this.getMsgsFromDb();
         this.ready = true;
     },
     methods: {
-        getMsgsFrom: function (event, id) {
+        getMsgsFrom: async function (event, id) {
             console.log(event.target.textContent, id)
             //this.addFrend(event.target.textContent);
             //this.deleteFrend(id);
-            //this.addMsg('Hi!', 'I am')
+            //this.addMsg('Hi!', 'Bob', 'I am');
+            
             this.frend = event.target.textContent;
+            // this.msgs = [];
+            this.msgs = await this.getMsgsFromDb(this.frend);
+            console.log(this.msgs);
         },
 
         // Работа с БД
@@ -57,24 +60,24 @@ var app = new Vue({
             this.frendsList = await this.getFrendsFromDb();      
           },
 
-          async addMsg(text, from) {
+          async addMsg(text, from, to) {
             this.addDisabled = true;
             let nowStr = new Date().toLocaleString();
             let msg = {
               datetime: nowStr,
               text: text,
-              from: from
-              //class: "text-left"
+              from: from,
+              to: to
             };
             console.log('Add msg to DB: '+JSON.stringify(msg));
             await this.addMsgToDb(msg);
-            this.msgs = await this.getMsgsFromDb();
+            this.msgs = await this.getMsgsFromDb(this.frend);
             this.addDisabled = false;      
           },
 
           async deleteFrend(id) {
             await this.deleteMsgFromDb(id);
-            this.msgs = await this.getMsgsFromDb();      
+            this.msgs = await this.getMsgsFromDb(this.frend);      
           },
 
           // Методы БД
@@ -141,7 +144,7 @@ var app = new Vue({
             });
           },
 
-          async getMsgsFromDb() {
+          async getMsgsFromDb(frend) {
             return new Promise((resolve, reject) => {
               let trans = this.db.transaction(['msgs'],'readonly');
               trans.oncomplete = e => {
@@ -152,13 +155,17 @@ var app = new Vue({
               store.openCursor().onsuccess = e => {
                 let cursor = e.target.result;
                 if (cursor) {
-                  if (cursor.value.from != MY_NAME) {
-                    cursor.value.class = "text-left"
+                  if (cursor.value.from == frend || cursor.value.to == frend) {
+                    if (cursor.value.from != MY_NAME) {
+                      cursor.value.class = "text-left"
+                    } else {
+                      cursor.value.class = "text-right"
+                    }
+                    msgs.push(cursor.value)
+                    cursor.continue();
                   } else {
-                    cursor.value.class = "text-right"
+                    cursor.continue();
                   }
-                  msgs.push(cursor.value)
-                  cursor.continue();
                 }
               };
             });
