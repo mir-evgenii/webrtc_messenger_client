@@ -28,7 +28,33 @@
 <body>
     <div id="app">
     <b-container class="bv-example-row">
-        <b-alert show>Web-RTC msgs v 1.0</b-alert>
+        <b-alert show><b-button v-b-modal.modal-menu><b-icon-list></b-icon-list></b-button> Web-RTC msgs v 1.0</b-alert>
+
+        <!-- Modal menu -->
+        <b-modal id="modal-menu" title="Menu" hide-footer>
+            <b-button block v-b-modal.modal-add-frend>Add frend</b-button>
+            <b-button block v-b-modal.modal-edit-frend>Edit frend</b-button>
+            <b-button block v-b-modal.modal-del-frend>Del frend</b-button>
+        </b-modal>
+        
+        <b-modal id="modal-add-frend" title="Add frend" @show="resetModal" @hidden="resetModal" @ok="handleOk">
+            <form ref="form" @submit.stop.prevent="handleSubmit">
+                <b-form-group
+                :state="nameState"
+                label="Name"
+                label-for="name-input"
+                invalid-feedback="Name is required"
+                >
+                <b-form-input
+                    id="name-input"
+                    v-model="name"
+                    :state="nameState"
+                    required
+                ></b-form-input>
+                </b-form-group>
+            </form>
+        </b-modal>
+
     <b-row>
 
         <!-- Frend List -->

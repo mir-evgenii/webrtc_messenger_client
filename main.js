@@ -21,6 +21,10 @@ var app = new Vue({
       msgs: [],
       sendMsgText: '',
       db:null,
+
+      name:'',
+      nameState: null,
+
       ready:false,
       addDisabled:false,
       frend:false
@@ -31,10 +35,44 @@ var app = new Vue({
         this.ready = true;
     },
     methods: {
+
+      checkFormValidity() {
+        const valid = this.$refs.form.checkValidity()
+        this.nameState = valid
+        return valid
+      },
+      resetModal() {
+        this.name = ''
+        this.nameState = null
+      },
+      handleOk(bvModalEvt) {
+        // Prevent modal from closing
+        bvModalEvt.preventDefault()
+        // Trigger submit handler
+        this.handleSubmit()
+      },
+      handleSubmit() {
+        // Exit when the form isn't valid
+        if (!this.checkFormValidity()) {
+          return
+        }
+        // Push the name to submitted names
+        this.addFrend(this.name);
+        // Hide the modal manually
+        this.$nextTick(() => {
+          this.$bvModal.hide('modal-add-frend')
+        })
+      },
+
+
         sendMsg: async function () {
           this.addMsg(this.sendMsgText, 'I am', this.frend);
           this.sendMsgText = '';
           this.msgs = await this.getMsgsFromDb(this.frend);
+        },
+
+        addFrend: async function() {
+
         },
 
         getMsgsFrom: async function (event, id) {
