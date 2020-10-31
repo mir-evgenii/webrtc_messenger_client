@@ -23,21 +23,35 @@
 
     <!-- Load the following for BootstrapVueIcons support -->
     <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue-icons.min.js"></script>
+
+    <!-- Mobile detect -->
+    <script src="https://cdn.jsdelivr.net/npm/mobile-detect@1.4.4/mobile-detect.min.js"></script>
 </head>
 
 <body>
     <div id="app">
     <b-container class="bv-example-row">
-        <b-alert show><b-button v-b-modal.modal-menu><b-icon-list></b-icon-list></b-button> Web-RTC msgs v 1.0</b-alert>
 
         <!-- Modal menu -->
-        <b-modal id="modal-menu" title="Menu" hide-footer>
-            <b-button block v-b-modal.modal-add-frend>Add frend</b-button>
-            <b-button block v-b-modal.modal-edit-frend>Edit frend</b-button>
-            <b-button block v-b-modal.modal-del-frend>Del frend</b-button>
+        <b-modal id="modal-menu" centered title="Menu" hide-footer>
+        <b-container class="bv-example-row">
+            <b-row class="mt-2 mb-2">
+            <b-button v-b-modal.modal-add-frend><b-icon-person-plus-fill></b-icon-person-plus-fill></b-button>
+            <b-button v-if="frend" v-b-modal.modal-edit-frend><b-icon-person-lines-fill></b-icon-person-lines-fill></b-button>
+            <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-person-x-fill></b-icon-person-x-fill></b-button>
+            <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-trash-fill></b-icon-trash-fill></b-button>
+            </b-row>
+            <b-row class="mb-2">
+            <frend-list 
+                v-for="item in frendsList" 
+                v-bind:frend="item"
+                v-bind:key="item.id">
+            </frend-list>
+            </b-row>
+        </b-container>
         </b-modal>
         
-        <b-modal id="modal-add-frend" title="Add frend" @show="resetModal" @hidden="resetModal" @ok="handleOk">
+        <b-modal id="modal-add-frend" centered title="Add frend" @show="resetModal" @hidden="resetModal" @ok="handleOk">
             <form ref="form" @submit.stop.prevent="handleSubmit">
                 <b-form-group
                 :state="nameState"
@@ -55,10 +69,60 @@
             </form>
         </b-modal>
 
-    <b-row>
+        <b-modal id="modal-edit-frend" centered ok-title="Edit" ok-variant="success" title="Edit frend" @show="resetModal" @hidden="resetModal" @ok="handleEdit">
+            <p>Edit frend {{ frend.name }}</p>
+            <form ref="form" @submit.stop.prevent="handleSubmit">
+                <b-form-group
+                :state="nameState"
+                label="Name"
+                label-for="name-input"
+                invalid-feedback="Name is required"
+                >
+                <b-form-input
+                    id="name-input"
+                    v-model="frend.name"
+                    :state="nameState"
+                    required
+                ></b-form-input>
+                </b-form-group>
+            </form>
+        </b-modal>
+
+        <b-modal id="modal-del-frend" ok-title="Delete" ok-variant="danger" centered title="Delete frend" @ok="handleDel">
+            <p class="my-4">You delete frend {{ frend.name }}!</p>
+        </b-modal>
+
+        <!-- Nav bar mobile -->
+        <b-navbar v-if="isMobile" sticky="true">
+            <b-navbar-nav>
+                <b-button-group>
+                <b-button v-if="frend" v-on:click="app.back()"><b-icon-arrow-left></b-icon-arrow-left></b-button>
+                <b-button v-b-modal.modal-add-frend><b-icon-person-plus-fill></b-icon-person-plus-fill></b-button>
+                <b-button v-if="frend" v-b-modal.modal-edit-frend><b-icon-person-lines-fill></b-icon-person-lines-fill></b-button>
+                <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-person-x-fill></b-icon-person-x-fill></b-button>
+                <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-trash-fill></b-icon-trash-fill></b-button>
+                </b-button-group>
+            </b-navbar-nav>
+        </b-navbar>
+
+        <!-- Nav bar -->
+        <b-navbar v-else sticky="true" class="w-100" type="light" variant="light">
+            <b-navbar-nav>
+                <b-button-group>
+                <b-button v-on:click="app.frendList()"><b-icon-people-fill></b-icon-people-fill></b-button>
+                <b-button v-b-modal.modal-add-frend><b-icon-person-plus-fill></b-icon-person-plus-fill></b-button>
+                <b-button v-if="frend" v-b-modal.modal-edit-frend><b-icon-person-lines-fill></b-icon-person-lines-fill></b-button>
+                <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-person-x-fill></b-icon-person-x-fill></b-button>
+                <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-trash-fill></b-icon-trash-fill></b-button>
+                </b-button-group>
+            </b-navbar-nav>
+        </b-navbar>
+
+
+    <b-row class="mb-2">
 
         <!-- Frend List -->
-        <b-col cols="3">
+        <b-col v-if="frendListVisible" cols="3">
             <frend-list 
                 v-for="item in frendsList" 
                 v-bind:frend="item"
@@ -66,31 +130,17 @@
             </frend-list>
         </b-col>
 
+        <div></div>
+
         <!-- Msg List -->
         <b-col cols="9">
         <div v-if="frend">
-            <b-alert show>Msgs from {{ frend }}</b-alert>
             <msg-list 
                 v-for="item in msgs" 
                 v-bind:msg="item"
                 v-bind:key="item.id">
             </msg-list>
 
-            <!-- Msg form -->
-            <b-row align-v="center">
-            <b-col cols="10">
-            <b-form-textarea
-            id="textarea"
-            placeholder="Enter msg..."
-            v-model="sendMsgText"
-            rows="1"
-            max-rows="10"
-            ></b-form-textarea>
-            </b-col>
-            <b-col align-self="center" cols="2">
-            <b-button block pill size="lg" class="pb-2" v-on:click="app.sendMsg()"><b-icon-shift></b-icon-shift></b-button>
-            </b-col>
-            </b-row>
         </div>
 
         <!-- Start msg -->
@@ -115,6 +165,52 @@
         </b-col>
 
     </b-row>
+
+
+    <!-- Msg form -->
+    <div v-if="frend">
+
+        <!-- Msg form for mobile -->
+        <b-container v-if="isMobile">
+            <b-row align-v="center mx-0" class="fixed-bottom m-0 rounded-0">
+                <b-col cols="10">
+                    <b-form-input
+                        id="textarea"
+                        v-bind:placeholder="frend.name"
+                        v-model="sendMsgText"
+                        rows="1"
+                        max-rows="10"
+                        class="w-100 xl"
+                        ></b-form-input>
+                </b-col>
+                <b-col align-self="center" cols="2">
+                    <b-button v-on:click="app.sendMsg()" class="w-100 xl"><b-icon-shift></b-icon-shift></b-button>
+                </b-col>
+            </b-row>
+        </b-container>
+
+        <!-- Msg form for desktop -->
+        <b-container v-else>
+            <b-row align-v="center mx-0" class="fixed-bottom m-0 rounded-0">
+                <b-col cols="3"></b-col>
+                <b-col cols="5">
+                    <b-form-input
+                        id="textarea"
+                        v-bind:placeholder="frend.name"
+                        v-model="sendMsgText"
+                        rows="1"
+                        max-rows="10"
+                        class="w-100 xl"
+                        ></b-form-input>
+                </b-col>
+                <b-col align-self="center" cols="1">
+                    <b-button v-on:click="app.sendMsg()" class="w-100 xl"><b-icon-shift></b-icon-shift></b-button>
+                </b-col>
+                <b-col cols="3"></b-col>
+            </b-row>
+        </b-container>
+
+    </div>
 
     </b-container>
     </div>
