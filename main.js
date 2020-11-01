@@ -42,7 +42,8 @@ var app = new Vue({
       addDisabled:false,
       frend:false,
       frendId:false,
-      frendListVisible: true
+      frendListVisible: true,
+      widthMsgList: 9
     },
     async created() {
         this.db = await getDb();
@@ -56,6 +57,7 @@ var app = new Vue({
 
       frendList() {
         this.frendListVisible = !this.frendListVisible;
+        this.widthMsgList = this.frendListVisible ? 9 : 12;
       },
 
       detectDevice() {

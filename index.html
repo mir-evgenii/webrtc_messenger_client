@@ -118,8 +118,29 @@
             </b-navbar-nav>
         </b-navbar>
 
+    <b-row v-if="isMobile" class="mb-2">
+            <!-- Msg List -->
+            <b-col cols="12">
+            <div v-if="frend" class="mt-2 mb-2">
+                <msg-list 
+                    v-for="item in msgs" 
+                    v-bind:msg="item"
+                    v-bind:key="item.id">
+                </msg-list>
+            </div>       
+            <!-- Start msg -->
+            <div v-else>
+                <frend-list
+                    class="mt-2 mb-2"
+                    v-for="item in frendsList" 
+                    v-bind:frend="item"
+                    v-bind:key="item.id">
+                </frend-list>             
+            </div>
+            </b-col>
+    </b-row>
 
-    <b-row class="mb-2">
+    <b-row v-else class="mb-2">
 
         <!-- Frend List -->
         <b-col v-if="frendListVisible" cols="3">
@@ -140,7 +161,6 @@
                 v-bind:msg="item"
                 v-bind:key="item.id">
             </msg-list>
-
         </div>
 
         <!-- Start msg -->
@@ -220,13 +240,7 @@
 </body>
 
     <!-- JS -->
-    <!-- <script type="module" src='DB.js'></script> -->
-    <!-- <script type="module">
-        import {sayHi} from './DB.js';
-    </script> -->
     <script src='./DB.js'></script>
-
     <script src='./main.js'></script>
-    
 
 </html>
