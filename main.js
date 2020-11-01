@@ -1,11 +1,8 @@
-// import {sayHi} from './DB.js';
 
 const DB_NAME = 'msgdb';
 const DB_VERSION = 1;
 
 const MY_NAME = 'I am';
-
-// sayHi();
 
 Vue.component('frend-list', {
     props: ['frend'],
@@ -48,8 +45,8 @@ var app = new Vue({
       frendListVisible: true
     },
     async created() {
-        this.db = await this.getDb();
-        this.frendsList = await this.getFrendsFromDb();
+        this.db = await getDb();
+        this.frendsList = await getFrendsFromDb(this.db);
         this.ready = true;
         this.isMobile = false;
         this.brouser = false;
@@ -87,20 +84,15 @@ var app = new Vue({
       },
 
       handleOk(bvModalEvt) {
-        // Prevent modal from closing
         bvModalEvt.preventDefault()
-        // Trigger submit handler
         this.handleSubmit()
       },
 
       handleSubmit() {
-        // Exit when the form isn't valid
         if (!this.checkFormValidity()) {
           return
         }
-        // Push the name to submitted names
         this.addFrend(this.name);
-        // Hide the modal manually
         this.$nextTick(() => {
           this.$bvModal.hide('modal-add-frend')
         })
@@ -111,7 +103,6 @@ var app = new Vue({
       handleDel() {
         this.deleteFrend(this.frend.id);
         this.frend = false;
-        //this.frendId = false;
       },
 
       // --------------- edit frend -------------------
@@ -131,7 +122,7 @@ var app = new Vue({
         sendMsg: async function () {
           this.addMsg(this.sendMsgText, 'I am', this.frend.name);
           this.sendMsgText = '';
-          this.msgs = await this.getMsgsFromDb(this.frend.name);
+          this.msgs = await getMsgsFromDb(this.db, this.frend.name);
         },
 
         getFrend: async function() {
@@ -144,10 +135,8 @@ var app = new Vue({
         },
 
         getMsgsFrom: async function (frend) {            
-            //this.frend = frend.name;
-            //this.frendId = frend.id;
             this.frend = frend;
-            this.msgs = await this.getMsgsFromDb(this.frend.name);
+            this.msgs = await getMsgsFromDb(this.db, this.frend.name);
         },
 
         // ------------------- Работа с БД -------------------------
@@ -158,21 +147,21 @@ var app = new Vue({
               name: name
             };
             console.log('Add frend to DB: '+JSON.stringify(frend));
-            await this.addFrendToDb(frend);
-            this.frendsList = await this.getFrendsFromDb();
+            await addFrendToDb(this.db, frend);
+            this.frendsList = await getFrendsFromDb(this.db);
             this.addDisabled = false;      
           },
 
           async editFrend(frend) {
             this.addDisabled = true;
-            await this.addFrendToDb(frend);
-            this.frendsList = await this.getFrendsFromDb();
+            await addFrendToDb(this.db, frend);
+            this.frendsList = await getFrendsFromDb(this.db);
             this.addDisabled = false;
           },
 
           async deleteFrend(id) {
-            await this.deleteFrendFromDb(id);
-            this.frendsList = await this.getFrendsFromDb();      
+            await deleteFrendFromDb(this.db, id);
+            this.frendsList = await getFrendsFromDb(this.db);      
           },
 
           async addMsg(text, from, to) {
@@ -185,131 +174,14 @@ var app = new Vue({
               to: to
             };
             console.log('Add msg to DB: '+JSON.stringify(msg));
-            await this.addMsgToDb(msg);
-            this.msgs = await this.getMsgsFromDb(this.frend.name);
+            await addMsgToDb(this.db, msg);
+            this.msgs = await getMsgsFromDb(this.db, this.frend.name);
             this.addDisabled = false;      
           },
 
           async deleteMsg(id) {
-            await this.deleteMsgFromDb(id);
-            this.msgs = await this.getMsgsFromDb(this.frend.name);      
+            await deleteMsgFromDb(this.db, id);
+            this.msgs = await getMsgsFromDb(this.db, this.frend.name);      
           },
-
-          // -------------------- Методы БД -------------------------
-
-          async addFrendToDb(frend) {
-            return new Promise((resolve, reject) => {
-              let trans = this.db.transaction(['frends'],'readwrite');
-              trans.oncomplete = e => {
-                resolve();
-              };
-              let store = trans.objectStore('frends');
-              //store.add(frend);
-              store.put(frend);
-            });
-          },
-
-          async addMsgToDb(msg) {
-            return new Promise((resolve, reject) => {
-              let trans = this.db.transaction(['msgs'],'readwrite');
-              trans.oncomplete = e => {
-                resolve();
-              };
-              let store = trans.objectStore('msgs');
-              store.add(msg);
-            });
-          },
-
-          async deleteFrendFromDb(id) {
-            return new Promise((resolve, reject) => {
-              let trans = this.db.transaction(['frends'],'readwrite');
-              trans.oncomplete = e => {
-                resolve();
-              };
-              let store = trans.objectStore('frends');
-              store.delete(id);
-            });
-          },
-
-          async deleteMsgFromDb(id) {
-            return new Promise((resolve, reject) => {
-              let trans = this.db.transaction(['msgs'],'readwrite');
-              trans.oncomplete = e => {
-                resolve();
-              };
-              let store = trans.objectStore('msgs');
-              store.delete(id);
-            });
-          },
-
-          async getFrendsFromDb() {
-            return new Promise((resolve, reject) => {
-              let trans = this.db.transaction(['frends'],'readonly');
-              trans.oncomplete = e => {
-                resolve(frends);
-              };
-              let store = trans.objectStore('frends');
-              let frends = [];
-              store.openCursor().onsuccess = e => {
-                let cursor = e.target.result;
-                if (cursor) {
-                  frends.push(cursor.value)
-                  cursor.continue();
-                }
-              };
-            });
-          },
-
-          async getMsgsFromDb(frend) {
-            return new Promise((resolve, reject) => {
-              let trans = this.db.transaction(['msgs'],'readonly');
-              trans.oncomplete = e => {
-                resolve(msgs);
-              };
-              let store = trans.objectStore('msgs');
-              let msgs = [];
-              store.openCursor().onsuccess = e => {
-                let cursor = e.target.result;
-                if (cursor) {
-                  if (cursor.value.from == frend || cursor.value.to == frend) {
-                    if (cursor.value.from != MY_NAME) {
-                      cursor.value.class = "text-left"
-                    } else {
-                      cursor.value.class = "text-right"
-                    }
-                    msgs.push(cursor.value)
-                    cursor.continue();
-                  } else {
-                    cursor.continue();
-                  }
-                }
-              };
-            });
-          },
-
-          async getDb() {
-            return new Promise((resolve, reject) => {
-      
-              let request = window.indexedDB.open(DB_NAME, DB_VERSION);
-              
-              request.onerror = e => {
-                console.log('Error opening db', e);
-                reject('Error');
-              };
-        
-              request.onsuccess = e => {
-                resolve(e.target.result);
-              };
-              
-              request.onupgradeneeded = e => {
-                console.log('onupgradeneeded');
-                let db = e.target.result;
-                let objectStoreFrends = db.createObjectStore("frends", { autoIncrement: true, keyPath:'id' });
-                let objectStoreMsgs = db.createObjectStore("msgs", { autoIncrement: true, keyPath:'id' });
-              };
-            });
-          }
-
-        //
     }
 })
