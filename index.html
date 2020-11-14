@@ -101,6 +101,7 @@
                 <b-button v-if="frend" v-b-modal.modal-edit-frend><b-icon-person-lines-fill></b-icon-person-lines-fill></b-button>
                 <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-person-x-fill></b-icon-person-x-fill></b-button>
                 <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-trash-fill></b-icon-trash-fill></b-button>
+                <b-button v-if="frend" v-on:click="createOfferSDP()">WebRTC</b-button>
                 </b-button-group>
             </b-navbar-nav>
         </b-navbar>
@@ -114,6 +115,7 @@
                 <b-button v-if="frend" v-b-modal.modal-edit-frend><b-icon-person-lines-fill></b-icon-person-lines-fill></b-button>
                 <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-person-x-fill></b-icon-person-x-fill></b-button>
                 <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-trash-fill></b-icon-trash-fill></b-button>
+                <b-button v-if="frend" v-on:click="createOfferSDP()">WebRTC</b-button>
                 </b-button-group>
             </b-navbar-nav>
         </b-navbar>
@@ -240,6 +242,8 @@
 </body>
 
     <!-- JS -->
+    <script src='./api.js'></script>
+    <script src='./webrtc.js'></script>
     <script src='./DB.js'></script>
     <script src='./main.js'></script>
 
