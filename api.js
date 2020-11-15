@@ -19,7 +19,7 @@ async function getOnline() {
     } else {
         console.log('error');
     }
-    getOnlineFrends([123]);
+    getMessages();
 }
 
 // обьявить серверу что клиент вышел из сети
@@ -40,21 +40,26 @@ async function getOnlineFrends(keys) {
     let url = server_host + api_command.get_online_clients + "?keys=" + keys;
     let response = await sendRequest(url);
     let json = JSON.parse(response);
-    console.log(json.online_users);
+    // TODO добавить обработку ошибки
+    return json.online_users;
 }
 
 // отправить сообщение
-async function sendMessage(message, sender, frend) {
-    let url = "http://localhost:8080/client/get?keys=123";
+async function sendMessage(message, sender, recipient) {
+    let date = getFormatedDateTime();
+    let sign = ''; // TODO реализовать подпись RSA
+    let url = server_host + api_command.send_message + "?content=" + message + "&sender=" + sender + "&recipient=" + recipient + "&date=" + date + "&sign=" + sign;
     let response = await sendRequest(url);
     let json = JSON.parse(response);
+    console.log(json);
 }
 
 // получить сообщения
 async function getMessages() {
-    let url = "http://localhost:8080/client/get?keys=123";
+    let url = server_host + api_command.get_messages + "?key=" + public_key;
     let response = await sendRequest(url);
     let json = JSON.parse(response);
+    console.log(json['messages-for-client']); // TODO заменить - на _ на сервере
 }
 
 // отправка кросс-доменного запроса
@@ -66,4 +71,17 @@ async function sendRequest(url) {
       });
     let text = await response.text();
     return text;
+}
+
+function getFormatedDateTime() {
+    let date = new Date();
+    let curr_date = date.getDate();
+    let curr_month = date.getMonth() + 1;
+    let curr_year = date.getFullYear();
+    let curr_hour = date.getHours();
+    let curr_minute = date.getMinutes();
+    let curr_secund = date.getSeconds();
+    let formated_date = curr_date + '-' + curr_month + '-' + curr_year + ' ' + curr_hour + ':' + curr_minute + ':' + curr_secund; 
+
+    return formated_date;
 }
