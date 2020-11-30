@@ -19,7 +19,8 @@ async function getOnline() {
     } else {
         console.log('error');
     }
-    getMessages();
+    //getMessageSign();
+    //getMessages();
 }
 
 // обьявить серверу что клиент вышел из сети
