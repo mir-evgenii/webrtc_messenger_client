@@ -28,8 +28,6 @@ function createOfferSDP() {
   dc.onmessage = function(e) {
     if (e.data) console.log(e.data);//TODO добавление сообщения //addMSG(e.data, "other");
   }
-  getOnline();
-
 };
 
 function start() {
@@ -38,4 +36,25 @@ function start() {
   pc.setRemoteDescription(answerDesc);
 }
 
+function sendMsgWebRtc (msg) {
+  dc.send(msg);
+  // добавить сообщение в базу addMSG(value, "me");
+}
+
 //createOfferSDP();
+
+pc.ondatachannel  = function(e) {dc = e.channel; dcInit(dc)};
+
+function dcInit(dc) {
+  dc.onopen    = function()  {console.log("Conected!")};
+  dc.onmessage = function(e) {if (e.data) console.log(e.data);}
+}
+
+function createAnswerSDP(offerSDP) {
+  var offerDesc = new RTCSessionDescription(JSON.parse(offerSDP));
+  pc.setRemoteDescription(offerDesc)
+  pc.createAnswer(function (answerDesc) {
+    pc.setLocalDescription(answerDesc)
+  }, function () {console.warn("Couldn't create offer")},
+  sdpConstraints);
+};
