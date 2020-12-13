@@ -95,6 +95,20 @@
             <p class="my-4">You delete frend {{ frend.name }}!</p>
         </b-modal>
 
+        <!-- Modal call -->
+        <b-modal id="modal-call" size="xl" centered title="Call" hide-footer>
+            <b-row class="mb-2">
+                <b-col cols="5"></b-col><b-col cols="2"><h1>{{ frend.name }}</h1></b-col><b-col cols="5"></b-col>
+            </b-row>
+            <b-button pill variant="outline-danger" size="lg"><b-icon-telephone-x-fill></b-icon-telephone-x-fill></b-button>
+        </b-modal>
+
+        <!-- Modal video-call -->
+        <b-modal id="modal-video-call" size="xl" centered title="Video-call" hide-footer>
+            <h1>{{ frend.name }}</h1>
+            <b-button pill variant="outline-danger" size="lg"><b-icon-telephone-x-fill></b-icon-telephone-x-fill></b-button>
+        </b-modal>
+
         <!-- Nav bar mobile -->
         <b-navbar v-if="isMobile" sticky="true">
             <b-navbar-nav>
@@ -105,6 +119,8 @@
                 <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-person-x-fill></b-icon-person-x-fill></b-button>
                 <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-trash-fill></b-icon-trash-fill></b-button>
                 <b-button v-if="frend" v-on:click="offerWebRTC()">WebRTC</b-button>
+                <b-button v-if="frend" v-b-modal.modal-call><b-icon-telephone-fill></b-icon-telephone-fill></b-button>
+                <b-button v-if="frend" v-b-modal.modal-video-call><b-icon-camera-reels-fill></b-icon-camera-reels-fill></b-button>
                 </b-button-group>
             </b-navbar-nav>
         </b-navbar>
@@ -119,6 +135,8 @@
                 <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-person-x-fill></b-icon-person-x-fill></b-button>
                 <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-trash-fill></b-icon-trash-fill></b-button>
                 <b-button v-if="frend" v-on:click="offerWebRTC()">WebRTC</b-button>
+                <b-button v-if="frend" v-b-modal.modal-call><b-icon-telephone-fill></b-icon-telephone-fill></b-button>
+                <b-button v-if="frend" v-b-modal.modal-video-call><b-icon-camera-reels-fill></b-icon-camera-reels-fill></b-button>
                 </b-button-group>
             </b-navbar-nav>
         </b-navbar>

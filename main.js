@@ -32,6 +32,7 @@ var app = new Vue({
       msgs: [],
       sendMsgText: '',
       db:null,
+      webrtc: [false, ''],
 
       showDismissibleAlert: true,
 
