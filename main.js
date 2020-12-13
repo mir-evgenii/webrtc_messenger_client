@@ -123,6 +123,8 @@ var app = new Vue({
 
         sendMsg: async function () {
           this.addMsg(this.sendMsgText, 'I am', this.frend.name);
+          // WebRTC
+          sendMsgWebRtc(this.sendMsgText);
           this.sendMsgText = '';
           this.msgs = await getMsgsFromDb(this.db, this.frend.name);
         },
