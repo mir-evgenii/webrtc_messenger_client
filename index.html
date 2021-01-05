@@ -98,15 +98,38 @@
         <!-- Modal call -->
         <b-modal id="modal-call" size="xl" centered title="Call" hide-footer>
             <b-row class="mb-2">
-                <b-col cols="5"></b-col><b-col cols="2"><h1>{{ frend.name }}</h1></b-col><b-col cols="5"></b-col>
+                <b-col cols="5"></b-col>
+                <b-col cols="2"><h1><b-icon-person-circle></b-icon-person-circle></h1></b-col>
+                <b-col cols="5"></b-col>
             </b-row>
-            <b-button pill variant="outline-danger" size="lg"><b-icon-telephone-x-fill></b-icon-telephone-x-fill></b-button>
+            <b-row class="mb-2">
+                <b-col cols="5"></b-col>
+                <b-col cols="2"><h1>{{ frend.name }}</h1></b-col>
+                <b-col cols="5"></b-col>
+            </b-row>
+            <b-row class="mb-2">
+                <b-col cols="5"></b-col>
+                <b-col cols="2"><b-button pill variant="outline-danger" size="lg"><b-icon-telephone-x-fill></b-icon-telephone-x-fill></b-button></b-col>
+                <b-col cols="5"></b-col>
+            </b-row>
         </b-modal>
 
         <!-- Modal video-call -->
         <b-modal id="modal-video-call" size="xl" centered title="Video-call" hide-footer>
-            <h1>{{ frend.name }}</h1>
-            <b-button pill variant="outline-danger" size="lg"><b-icon-telephone-x-fill></b-icon-telephone-x-fill></b-button>
+            <b-row class="mb-2">
+                <b-col cols="5"></b-col>
+                <b-col cols="2"><h1>{{ frend.name }}</h1></b-col>
+                <b-col cols="5"></b-col>
+            </b-row>
+
+            <video id="localVideo" autoplay muted></video>
+            <video id="remoteVideo" autoplay></video>
+            
+            <b-row class="mb-2">
+                <b-col cols="5"></b-col>
+                <b-col cols="2"><b-button pill variant="outline-danger" size="lg"><b-icon-telephone-x-fill></b-icon-telephone-x-fill></b-button></b-col>
+                <b-col cols="5"></b-col>
+            </b-row>
         </b-modal>
 
         <!-- Nav bar mobile -->
