@@ -6,7 +6,7 @@ const MY_NAME = 'I am';
 
 Vue.component('frend-list', {
     props: ['frend'],
-    template: '<b-button v-on:click="app.getMsgsFrom(frend)" block>{{ frend.name }}</b-button>'
+    template: '<b-button v-on:click="app.getMsgsFrom(frend)" variant="outline-secondary" block>{{ frend.name }}</b-button>'
 })
 
 Vue.component('frend-list-dropdown', {
@@ -36,23 +36,35 @@ var app = new Vue({
 
       showDismissibleAlert: true,
 
+      // frend name
       name:'',
       nameState: null,
+
+      // frend public RSA key
+      key:'',
+      keyState: null,
 
       ready:false,
       addDisabled:false,
       frend:false,
       frendId:false,
       frendListVisible: true,
-      widthMsgList: 9
+      widthMsgList: 9,
+      isMobile:false,
+      updateInterval:5000 // частота обновления сообщений 5 сек
     },
     async created() {
         this.db = await getDb();
         this.frendsList = await getFrendsFromDb(this.db);
         this.ready = true;
-        this.isMobile = false;
+        //this.isMobile = false;
         this.brouser = false;
         this.detectDevice();
+
+        if (getOnline()) { // обновление сообщений // getOnline - api
+          await this.updateMsgs();
+          await this.updateOnlineFrends();
+        } 
     },
     methods: {
 
@@ -95,7 +107,7 @@ var app = new Vue({
         if (!this.checkFormValidity()) {
           return
         }
-        this.addFrend(this.name);
+        this.addFrend(this.name, this.key);
         this.$nextTick(() => {
           this.$bvModal.hide('modal-add-frend')
         })
@@ -121,6 +133,27 @@ var app = new Vue({
       },
 
       // --------------- Metods ------------------------
+        updateOnlineFrends: async function () {
+          let frends = await getFrendsFromDb(this.db);
+          let keys = [];
+          for (let i = 0; i < frends.length; i++) {
+            keys.push(frends[i]['key']);
+          }
+          let onlineFrends = await getOnlineFrends(keys.join(';'));
+          console.log(onlineFrends);
+          //setTimeout(this.updateOnlineFrends, this.updateInterval);
+        },
+
+        updateMsgs: async function () {
+          let msgs = await getMessages(); // api
+          if (msgs.length > 0) {
+            msgs = JSON.parse(msgs[0]['content'])
+            console.log(msgs);
+            if (msgs['type'] == 'offer') createAnswerSDP('chat', msgs);
+            if (msgs['type'] == 'answer') start(msgs);
+          }
+          setTimeout(this.updateMsgs, this.updateInterval);
+        },
 
         sendMsg: async function () {
           this.addMsg(this.sendMsgText, 'I am', this.frend.name);
@@ -146,10 +179,11 @@ var app = new Vue({
 
         // ------------------- Работа с БД -------------------------
 
-          async addFrend(name) {
+          async addFrend(name, key) {
             this.addDisabled = true;
             let frend = {
-              name: name
+              name: name,
+              key: key
             };
             console.log('Add frend to DB: '+JSON.stringify(frend));
             await addFrendToDb(this.db, frend);

@@ -68,6 +68,20 @@
                     :state="nameState"
                     required
                 ></b-form-input>
+
+                </b-form-group>
+                <b-form-group
+                :state="keyState"
+                label="Key"
+                label-for="key-input"
+                invalid-feedback="Key is required"
+                >
+                <b-form-input
+                    id="key-input"
+                    v-model="key"
+                    :state="keyState"
+                    required
+                ></b-form-input>
                 </b-form-group>
             </form>
         </b-modal>
@@ -141,7 +155,7 @@
                 <b-button v-if="frend" v-b-modal.modal-edit-frend><b-icon-person-lines-fill></b-icon-person-lines-fill></b-button>
                 <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-person-x-fill></b-icon-person-x-fill></b-button>
                 <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-trash-fill></b-icon-trash-fill></b-button>
-                <b-button v-if="frend" v-on:click="offerWebRTC()">WebRTC</b-button>
+                <b-button v-if="frend" v-on:click="createOfferSDP('chat')">WebRTC</b-button>
                 <b-button v-if="frend" v-b-modal.modal-call><b-icon-telephone-fill></b-icon-telephone-fill></b-button>
                 <b-button v-if="frend" v-b-modal.modal-video-call><b-icon-camera-reels-fill></b-icon-camera-reels-fill></b-button>
                 </b-button-group>
@@ -157,7 +171,7 @@
                 <b-button v-if="frend" v-b-modal.modal-edit-frend><b-icon-person-lines-fill></b-icon-person-lines-fill></b-button>
                 <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-person-x-fill></b-icon-person-x-fill></b-button>
                 <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-trash-fill></b-icon-trash-fill></b-button>
-                <b-button v-if="frend" v-on:click="offerWebRTC()">WebRTC</b-button>
+                <b-button v-if="frend" v-on:click="createOfferSDP('chat')">WebRTC</b-button>
                 <b-button v-if="frend" v-b-modal.modal-call><b-icon-telephone-fill></b-icon-telephone-fill></b-button>
                 <b-button v-if="frend" v-b-modal.modal-video-call><b-icon-camera-reels-fill></b-icon-camera-reels-fill></b-button>
                 </b-button-group>

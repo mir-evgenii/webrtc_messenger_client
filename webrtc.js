@@ -1,10 +1,8 @@
 // offer
-// videoWebRTC();
-// createOfferSDP();
+// createOfferSDP(type); // type = 'chat'/'video'/'audio'
 // start(answerSDP);
 
 // join
-// videoWebRTC();
 // createAnswerSDP(offerSDP);
 
 
@@ -16,9 +14,13 @@ var dc;
 var state; //статус соединения
 var sdp_msg; // SDP датаграмма
 
-//---------video--------------
+//---------media--------------
 
-function videoWebRTC(){
+// type = 'video'/'audio'
+async function mediaWebRTC(type){
+  let constraints = {audio: true, video: true};
+  if (type == 'audio') constraints = {audio: true, video: false};
+
   pc.ontrack = event => {
     const stream = event.streams[0];
     if (!remoteVideo.srcObject || remoteVideo.srcObject.id !== stream.id) {
@@ -26,10 +28,7 @@ function videoWebRTC(){
     }
   };
 
-  navigator.mediaDevices.getUserMedia({
-    audio: true,
-    video: true,
-  }).then(stream => {
+  navigator.mediaDevices.getUserMedia(constraints).then(stream => {
     // Display your local video in #localVideo element
     localVideo.srcObject = stream;
     // Add your stream to be sent to the conneting peer
@@ -40,10 +39,10 @@ function videoWebRTC(){
 //----------join--------------
 
 // join 4
-// function dcInit(dc) {
-//   dc.onopen    = function()  {console.log("Conected!")};
-//   dc.onmessage = function(e) {if (e.data) console.log(e.data); app.addMsg(e.data, app.frend.name, 'I am');}
-// }
+function dcInit(dc) {
+  dc.onopen    = function()  {console.log("Conected!")};
+  dc.onmessage = function(e) {if (e.data) console.log(e.data); app.addMsg(e.data, app.frend.name, 'I am');}
+}
 
 function joinWebRTC() {
     // join 1 
@@ -53,6 +52,7 @@ function joinWebRTC() {
       if (e.candidate) return;
       sdp_msg = JSON.stringify(pc.localDescription);
       console.log(sdp_msg);
+      sendMessage(sdp_msg, my_sender_data.key, app.frend.key);
     }
     // join 3 изменение статуса 
     pc.oniceconnectionstatechange = function(e) {
@@ -62,7 +62,9 @@ function joinWebRTC() {
 }
 
 // join 5
-function createAnswerSDP(offerSDP) {
+// type = 'chat'/'video'/'audio'
+async function createAnswerSDP(type, offerSDP) {
+  if (type == 'video' || type == 'audio') await mediaWebRTC(type);
   joinWebRTC();
   var offerDesc = new RTCSessionDescription(offerSDP);
   pc.setRemoteDescription(offerDesc);
@@ -85,20 +87,25 @@ function offerWebRTC() {
     if (e.candidate) return;
     sdp_msg = JSON.stringify(pc.localDescription);
     console.log(sdp_msg);
+    
+    sendMessage(sdp_msg, my_sender_data.key, app.frend.key); // api
   }
 }
 
 // offer 3
-function createOfferSDP() {
-  //videoWebRTC();
+// type = 'chat'/'video'/'audio'
+async function createOfferSDP(type) {
+  if (type == 'video' || type == 'audio') await mediaWebRTC(type);
   offerWebRTC();
-  // dc = pc.createDataChannel("chat"); // chat
+  if (type == 'chat') dc = pc.createDataChannel("chat");
   pc.createOffer().then(function(e) {
     pc.setLocalDescription(e)
   });
-  // dc.onmessage = function(e) { // chat
-  //   if (e.data) console.log(e.data); app.addMsg(e.data, app.frend.name, 'I am'); //TODO добавление сообщения //addMSG(e.data, "other");
-  // }
+  if (type == 'chat') {
+    dc.onmessage = function(e) {
+      if (e.data) console.log(e.data); app.addMsg(e.data, app.frend.name, 'I am'); //TODO добавление сообщения //addMSG(e.data, "other");
+    }
+  }
 }
 
 // offer 4
