@@ -48,7 +48,6 @@ async function getOffline() {
 // keys - список открытых ключей друзей
 async function getOnlineFrends(keys) {
     let url = server_host + api_command.get_online_clients + "?keys=" + keys;
-    console.log(url);
     let response = await sendRequest(url);
     let json = JSON.parse(response);
     // TODO добавить обработку ошибки
@@ -100,3 +99,8 @@ function getFormatedDateTime() {
 
     return formated_date;
 }
+
+// при закрытии вкладки с приложением выходим в офлайн
+window.addEventListener('beforeunload', async function (e) {
+    await getOffline();
+  }, false);

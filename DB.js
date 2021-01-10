@@ -7,7 +7,6 @@ async function addFrendToDb(db, frend) {
       resolve();
     };
     let store = trans.objectStore('frends');
-    //store.add(frend);
     store.put(frend);
   });
 }

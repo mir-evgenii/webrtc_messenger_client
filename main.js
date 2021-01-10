@@ -6,7 +6,7 @@ const MY_NAME = 'I am';
 
 Vue.component('frend-list', {
     props: ['frend'],
-    template: '<b-button v-on:click="app.getMsgsFrom(frend)" variant="outline-secondary" block>{{ frend.name }}</b-button>'
+    template: '<b-button v-if="frend.status" v-on:click="app.getMsgsFrom(frend)" block>{{ frend.name }} <b-icon-broadcast-pin v-if="frend.webrtc"></b-icon-broadcast-pin></b-button><b-button v-else v-on:click="app.getMsgsFrom(frend)" variant="outline-secondary" block>{{ frend.name }}</b-button>'
 })
 
 Vue.component('frend-list-dropdown', {
@@ -140,8 +140,16 @@ var app = new Vue({
             keys.push(frends[i]['key']);
           }
           let onlineFrends = await getOnlineFrends(keys.join(';'));
-          console.log(onlineFrends);
-          //setTimeout(this.updateOnlineFrends, this.updateInterval);
+          for (let i = 0; i < frends.length; i++) {
+            if (onlineFrends.indexOf(frends[i]['key']) > -1) {
+              frends[i]['status'] = 1; // онлайн
+              await this.editFrend(frends[i]);
+            } else {
+              frends[i]['status'] = 0; // офлайн
+              await this.editFrend(frends[i]);
+            }
+          }
+          setTimeout(this.updateOnlineFrends, this.updateInterval);
         },
 
         updateMsgs: async function () {
@@ -157,8 +165,7 @@ var app = new Vue({
 
         sendMsg: async function () {
           this.addMsg(this.sendMsgText, 'I am', this.frend.name);
-          // WebRTC
-          sendMsgWebRtc(this.sendMsgText);
+          sendMsgWebRtc(this.sendMsgText); // отправка сообщения по WebRTC
           this.sendMsgText = '';
           this.msgs = await getMsgsFromDb(this.db, this.frend.name);
         },

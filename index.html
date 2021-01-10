@@ -155,9 +155,9 @@
                 <b-button v-if="frend" v-b-modal.modal-edit-frend><b-icon-person-lines-fill></b-icon-person-lines-fill></b-button>
                 <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-person-x-fill></b-icon-person-x-fill></b-button>
                 <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-trash-fill></b-icon-trash-fill></b-button>
-                <b-button v-if="frend" v-on:click="createOfferSDP('chat')">WebRTC</b-button>
-                <b-button v-if="frend" v-b-modal.modal-call><b-icon-telephone-fill></b-icon-telephone-fill></b-button>
-                <b-button v-if="frend" v-b-modal.modal-video-call><b-icon-camera-reels-fill></b-icon-camera-reels-fill></b-button>
+                <b-button v-if="frend.status" v-on:click="createOfferSDP('chat')">WebRTC <b-icon-broadcast-pin v-if="frend.webrtc"></b-icon-broadcast-pin></b-button>
+                <b-button v-if="frend.status" v-b-modal.modal-call v-on:click="createOfferSDP('audio')"><b-icon-telephone-fill></b-icon-telephone-fill></b-button>
+                <b-button v-if="frend.status" v-b-modal.modal-video-call v-on:click="createOfferSDP('video')"><b-icon-camera-reels-fill></b-icon-camera-reels-fill></b-button>
                 </b-button-group>
             </b-navbar-nav>
         </b-navbar>
@@ -171,9 +171,9 @@
                 <b-button v-if="frend" v-b-modal.modal-edit-frend><b-icon-person-lines-fill></b-icon-person-lines-fill></b-button>
                 <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-person-x-fill></b-icon-person-x-fill></b-button>
                 <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-trash-fill></b-icon-trash-fill></b-button>
-                <b-button v-if="frend" v-on:click="createOfferSDP('chat')">WebRTC</b-button>
-                <b-button v-if="frend" v-b-modal.modal-call><b-icon-telephone-fill></b-icon-telephone-fill></b-button>
-                <b-button v-if="frend" v-b-modal.modal-video-call><b-icon-camera-reels-fill></b-icon-camera-reels-fill></b-button>
+                <b-button v-if="frend.status" v-on:click="createOfferSDP('chat')">WebRTC <b-icon-broadcast-pin v-if="frend.webrtc"></b-icon-broadcast-pin></b-button>
+                <b-button v-if="frend.status" v-b-modal.modal-call v-on:click="createOfferSDP('audio')"><b-icon-telephone-fill></b-icon-telephone-fill></b-button>
+                <b-button v-if="frend.status" v-b-modal.modal-video-call v-on:click="createOfferSDP('video')"><b-icon-camera-reels-fill></b-icon-camera-reels-fill></b-button>
                 </b-button-group>
             </b-navbar-nav>
         </b-navbar>

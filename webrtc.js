@@ -55,9 +55,16 @@ function joinWebRTC() {
       sendMessage(sdp_msg, my_sender_data.key, app.frend.key);
     }
     // join 3 изменение статуса 
-    pc.oniceconnectionstatechange = function(e) {
+    pc.oniceconnectionstatechange = async function(e) {
       state = pc.iceConnectionState;
       console.log(state);
+      if (state == 'connected') {
+        app.frend['webrtc'] = 1;
+        await app.editFrend(app.frend);
+      } else {
+        app.frend['webrtc'] = 0;
+        await app.editFrend(app.frend);
+      }
     }
 }
 
@@ -78,9 +85,16 @@ async function createAnswerSDP(type, offerSDP) {
 
 function offerWebRTC() {
   // offer 1 изменение статуса 
-  pc.oniceconnectionstatechange = function(e) {
+  pc.oniceconnectionstatechange = async function(e) {
     state = pc.iceConnectionState;
     console.log(state);
+    if (state == 'connected') {
+      app.frend['webrtc'] = 1;
+      await app.editFrend(app.frend);
+    } else {
+      app.frend['webrtc'] = 0;
+      await app.editFrend(app.frend);
+    }
   }
   // offer 2 sdp датаграмма
   pc.onicecandidate = function(e) {
