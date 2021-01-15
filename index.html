@@ -36,20 +36,20 @@
     <b-container class="bv-example-row">
 
         <!-- Modal mobile menu -->
-        <b-modal id="modal-menu" centered title="Menu" hide-footer>
+        <b-modal id="modal-menu" centered title="Меню" hide-footer>
         <b-container class="bv-example-row">
-            <b-button v-b-modal.modal-add-frend  block><b-icon-person-plus-fill></b-icon-person-plus-fill></b-button>
-            <b-button v-if="frend" v-b-modal.modal-edit-frend  block><b-icon-person-lines-fill></b-icon-person-lines-fill></b-button>
-            <b-button v-if="frend" v-b-modal.modal-del-frend  block><b-icon-person-x-fill></b-icon-person-x-fill></b-button>
-            <b-button v-if="frend" v-b-modal.modal-del-msgs  block><b-icon-trash-fill></b-icon-trash-fill></b-button>
+            <b-button v-b-modal.modal-add-frend block>Добавить контакт</b-button>
+            <b-button v-if="frend" v-b-modal.modal-edit-frend block>Редактировать контакт</b-button>
+            <b-button v-if="frend" v-b-modal.modal-del-frend block>Удалить контакт</b-button>
+            <b-button v-if="frend" v-b-modal.modal-del-msgs block>Удалить диалог</b-button>
         </b-container>
         </b-modal>
         
-        <b-modal id="modal-add-frend" centered title="Add frend" @show="resetModal" @hidden="resetModal" @ok="handleOk">
+        <b-modal id="modal-add-frend" centered ok-only ok-title="Сохранить" ok-variant="success" title="Добавление контакта" @show="resetModal" @hidden="resetModal" @ok="handleOk">
             <form ref="form" @submit.stop.prevent="handleSubmit">
                 <b-form-group
                 :state="nameState"
-                label="Name"
+                label="Имя"
                 label-for="name-input"
                 invalid-feedback="Name is required"
                 >
@@ -63,7 +63,7 @@
                 </b-form-group>
                 <b-form-group
                 :state="keyState"
-                label="Key"
+                label="Ключ"
                 label-for="key-input"
                 invalid-feedback="Key is required"
                 >
@@ -77,12 +77,11 @@
             </form>
         </b-modal>
 
-        <b-modal id="modal-edit-frend" centered ok-title="Edit" ok-variant="success" title="Edit frend" @show="resetModal" @hidden="resetModal" @ok="handleEdit">
-            <p>Edit frend {{ frend.name }}</p>
+        <b-modal id="modal-edit-frend" centered ok-only ok-title="Сохранить" ok-variant="success" title="Редактировать контакт" @show="resetModal" @hidden="resetModal" @ok="handleEdit">
             <form ref="form" @submit.stop.prevent="handleSubmit">
                 <b-form-group
                 :state="nameState"
-                label="Name"
+                label="Имя"
                 label-for="name-input"
                 invalid-feedback="Name is required"
                 >
@@ -94,7 +93,7 @@
                 ></b-form-input>
                 <b-form-group
                 :state="keyState"
-                label="Key"
+                label="Ключ"
                 label-for="key-input"
                 invalid-feedback="Key is required"
                 >
@@ -108,16 +107,16 @@
             </form>
         </b-modal>
 
-        <b-modal id="modal-del-frend" ok-title="Delete" ok-variant="danger" centered title="Delete frend" @ok="handleDel">
-            <p class="my-4">You delete frend {{ frend.name }}!</p>
+        <b-modal id="modal-del-frend" ok-only ok-title="Удалить" ok-variant="danger" centered title="Удаление контакта" @ok="handleDel">
+            <p class="my-4">Удалить контакт {{ frend.name }}?</p>
         </b-modal>
 
-        <b-modal id="modal-del-msgs" ok-title="Delete" ok-variant="danger" centered title="Delete messages" @ok="handleDelAllMsg">
-            <p class="my-4">You delete messages from {{ frend.name }}!</p>
+        <b-modal id="modal-del-msgs" ok-only ok-title="Удалить" ok-variant="danger" centered title="Удаление диалога" @ok="handleDelAllMsg">
+            <p class="my-4">Удалить диалог с {{ frend.name }}?</p>
         </b-modal>
 
         <!-- Modal call -->
-        <b-modal id="modal-call" size="xl" centered title="Call" hide-footer>
+        <b-modal id="modal-call" size="xl" centered title="Звонок" hide-footer>
             <b-row class="mb-2">
                 <b-col cols="5"></b-col>
                 <b-col cols="2"><h1><b-icon-person-circle></b-icon-person-circle></h1></b-col>
@@ -136,7 +135,7 @@
         </b-modal>
 
         <!-- Modal video-call -->
-        <b-modal id="modal-video-call" size="xl" centered title="Video-call" hide-footer>
+        <b-modal id="modal-video-call" size="xl" centered title="Видео звонок" hide-footer>
             <b-row class="mb-2">
                 <b-col cols="5"></b-col>
                 <b-col cols="2"><h1>{{ frend.name }}</h1></b-col>
@@ -232,16 +231,16 @@
         <div v-else>
             <div>
                 <b-jumbotron bg-variant="light" text-variant="dark" border-variant="dark">
-                  <template v-slot:header>Web-RTC messenger</template>
+                  <template v-slot:header>Web-RTC мессенджер</template>
               
                   <template v-slot:lead>
-                    This messenger work on Web-RTC technology.
+                    Этот мессенджер работает на технологии Web-RTC.
                   </template>
               
                   <hr class="my-4">
               
                   <p>
-                    <b-link href="https://webrtc.org/">More about Web-RTC</b-link>
+                    <b-link href="https://webrtc.org/">Больше информации о Web-RTC</b-link>
                   </p>
                 </b-jumbotron>
               </div>              
