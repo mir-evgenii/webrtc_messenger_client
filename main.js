@@ -108,6 +108,7 @@ var app = new Vue({
           return
         }
         this.addFrend(this.name, this.key);
+        this.key = '';
         this.$nextTick(() => {
           this.$bvModal.hide('modal-add-frend')
         })
@@ -180,12 +181,10 @@ var app = new Vue({
 
         back: function() {
           this.frend = false;
-          sayHi();
         },
 
         getMsgsFrom: async function (frend) {            
             this.frend = frend;
-            this.key = frend.key;
             this.msgs = await getMsgsFromDb(this.db, this.frend.name);
         },
 

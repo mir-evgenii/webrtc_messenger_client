@@ -35,22 +35,13 @@
     <div id="app">
     <b-container class="bv-example-row">
 
-        <!-- Modal menu -->
+        <!-- Modal mobile menu -->
         <b-modal id="modal-menu" centered title="Menu" hide-footer>
         <b-container class="bv-example-row">
-            <b-row class="mt-2 mb-2">
-            <b-button v-b-modal.modal-add-frend><b-icon-person-plus-fill></b-icon-person-plus-fill></b-button>
-            <b-button v-if="frend" v-b-modal.modal-edit-frend><b-icon-person-lines-fill></b-icon-person-lines-fill></b-button>
-            <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-person-x-fill></b-icon-person-x-fill></b-button>
-            <b-button v-if="frend" v-b-modal.modal-del-msgs><b-icon-trash-fill></b-icon-trash-fill></b-button>
-            </b-row>
-            <b-row class="mb-2">
-            <frend-list 
-                v-for="item in frendsList" 
-                v-bind:frend="item"
-                v-bind:key="item.id">
-            </frend-list>
-            </b-row>
+            <b-button v-b-modal.modal-add-frend  block><b-icon-person-plus-fill></b-icon-person-plus-fill></b-button>
+            <b-button v-if="frend" v-b-modal.modal-edit-frend  block><b-icon-person-lines-fill></b-icon-person-lines-fill></b-button>
+            <b-button v-if="frend" v-b-modal.modal-del-frend  block><b-icon-person-x-fill></b-icon-person-x-fill></b-button>
+            <b-button v-if="frend" v-b-modal.modal-del-msgs  block><b-icon-trash-fill></b-icon-trash-fill></b-button>
         </b-container>
         </b-modal>
         
@@ -109,7 +100,7 @@
                 >
                 <b-form-input
                     id="key-input"
-                    v-model="key"
+                    v-model="frend.key"
                     :state="keyState"
                     required
                 ></b-form-input>
@@ -167,10 +158,8 @@
             <b-navbar-nav>
                 <b-button-group>
                 <b-button v-if="frend" v-on:click="app.back()"><b-icon-arrow-left></b-icon-arrow-left></b-button>
-                <b-button v-b-modal.modal-add-frend><b-icon-person-plus-fill></b-icon-person-plus-fill></b-button>
-                <b-button v-if="frend" v-b-modal.modal-edit-frend><b-icon-person-lines-fill></b-icon-person-lines-fill></b-button>
-                <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-person-x-fill></b-icon-person-x-fill></b-button>
-                <b-button v-if="frend" v-b-modal.modal-del-msgs><b-icon-trash-fill></b-icon-trash-fill></b-button>
+                <b-button v-if="!frend" v-b-modal.modal-add-frend><b-icon-person-plus-fill></b-icon-person-plus-fill></b-button>
+                <b-button v-if="frend" v-b-modal.modal-menu><b-icon-list></b-icon-list></b-button>
                 <b-button v-if="frend.status" v-on:click="createOfferSDP('chat')">WebRTC <b-icon-broadcast-pin v-if="frend.webrtc"></b-icon-broadcast-pin></b-button>
                 <b-button v-if="frend.status" v-b-modal.modal-call v-on:click="createOfferSDP('audio')"><b-icon-telephone-fill></b-icon-telephone-fill></b-button>
                 <b-button v-if="frend.status" v-b-modal.modal-video-call v-on:click="createOfferSDP('video')"><b-icon-camera-reels-fill></b-icon-camera-reels-fill></b-button>
