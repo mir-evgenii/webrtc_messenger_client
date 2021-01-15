@@ -98,7 +98,9 @@ function offerWebRTC() {
   }
   // offer 2 sdp датаграмма
   pc.onicecandidate = function(e) {
-    if (e.candidate) return;
+    if (e.candidate) {
+      return;
+    } 
     sdp_msg = JSON.stringify(pc.localDescription);
     console.log(sdp_msg);
     

@@ -42,7 +42,7 @@
             <b-button v-b-modal.modal-add-frend><b-icon-person-plus-fill></b-icon-person-plus-fill></b-button>
             <b-button v-if="frend" v-b-modal.modal-edit-frend><b-icon-person-lines-fill></b-icon-person-lines-fill></b-button>
             <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-person-x-fill></b-icon-person-x-fill></b-button>
-            <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-trash-fill></b-icon-trash-fill></b-button>
+            <b-button v-if="frend" v-b-modal.modal-del-msgs><b-icon-trash-fill></b-icon-trash-fill></b-button>
             </b-row>
             <b-row class="mb-2">
             <frend-list 
@@ -101,12 +101,28 @@
                     :state="nameState"
                     required
                 ></b-form-input>
+                <b-form-group
+                :state="keyState"
+                label="Key"
+                label-for="key-input"
+                invalid-feedback="Key is required"
+                >
+                <b-form-input
+                    id="key-input"
+                    v-model="key"
+                    :state="keyState"
+                    required
+                ></b-form-input>
                 </b-form-group>
             </form>
         </b-modal>
 
         <b-modal id="modal-del-frend" ok-title="Delete" ok-variant="danger" centered title="Delete frend" @ok="handleDel">
             <p class="my-4">You delete frend {{ frend.name }}!</p>
+        </b-modal>
+
+        <b-modal id="modal-del-msgs" ok-title="Delete" ok-variant="danger" centered title="Delete messages" @ok="handleDelAllMsg">
+            <p class="my-4">You delete messages from {{ frend.name }}!</p>
         </b-modal>
 
         <!-- Modal call -->
@@ -154,7 +170,7 @@
                 <b-button v-b-modal.modal-add-frend><b-icon-person-plus-fill></b-icon-person-plus-fill></b-button>
                 <b-button v-if="frend" v-b-modal.modal-edit-frend><b-icon-person-lines-fill></b-icon-person-lines-fill></b-button>
                 <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-person-x-fill></b-icon-person-x-fill></b-button>
-                <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-trash-fill></b-icon-trash-fill></b-button>
+                <b-button v-if="frend" v-b-modal.modal-del-msgs><b-icon-trash-fill></b-icon-trash-fill></b-button>
                 <b-button v-if="frend.status" v-on:click="createOfferSDP('chat')">WebRTC <b-icon-broadcast-pin v-if="frend.webrtc"></b-icon-broadcast-pin></b-button>
                 <b-button v-if="frend.status" v-b-modal.modal-call v-on:click="createOfferSDP('audio')"><b-icon-telephone-fill></b-icon-telephone-fill></b-button>
                 <b-button v-if="frend.status" v-b-modal.modal-video-call v-on:click="createOfferSDP('video')"><b-icon-camera-reels-fill></b-icon-camera-reels-fill></b-button>
@@ -170,7 +186,7 @@
                 <b-button v-b-modal.modal-add-frend><b-icon-person-plus-fill></b-icon-person-plus-fill></b-button>
                 <b-button v-if="frend" v-b-modal.modal-edit-frend><b-icon-person-lines-fill></b-icon-person-lines-fill></b-button>
                 <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-person-x-fill></b-icon-person-x-fill></b-button>
-                <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-trash-fill></b-icon-trash-fill></b-button>
+                <b-button v-if="frend" v-b-modal.modal-del-msgs><b-icon-trash-fill></b-icon-trash-fill></b-button>
                 <b-button v-if="frend.status" v-on:click="createOfferSDP('chat')">WebRTC <b-icon-broadcast-pin v-if="frend.webrtc"></b-icon-broadcast-pin></b-button>
                 <b-button v-if="frend.status" v-b-modal.modal-call v-on:click="createOfferSDP('audio')"><b-icon-telephone-fill></b-icon-telephone-fill></b-button>
                 <b-button v-if="frend.status" v-b-modal.modal-video-call v-on:click="createOfferSDP('video')"><b-icon-camera-reels-fill></b-icon-camera-reels-fill></b-button>

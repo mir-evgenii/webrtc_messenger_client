@@ -129,7 +129,11 @@ var app = new Vue({
       // --------------- del all msg -------------------
 
       handleDelAllMsg() {
-        
+        if (this.msgs.length > 0) {
+          for (let i = 0; i < this.msgs.length; i++) {
+            this.deleteMsg(this.msgs[i].id);
+          }
+        }
       },
 
       // --------------- Metods ------------------------
@@ -157,7 +161,7 @@ var app = new Vue({
           if (msgs.length > 0) {
             msgs = JSON.parse(msgs[0]['content'])
             console.log(msgs);
-            if (msgs['type'] == 'offer') createAnswerSDP('chat', msgs);
+            if (msgs['type'] == 'offer') createAnswerSDP('video', msgs);
             if (msgs['type'] == 'answer') start(msgs);
           }
           setTimeout(this.updateMsgs, this.updateInterval);
@@ -181,6 +185,7 @@ var app = new Vue({
 
         getMsgsFrom: async function (frend) {            
             this.frend = frend;
+            this.key = frend.key;
             this.msgs = await getMsgsFromDb(this.db, this.frend.name);
         },
 
