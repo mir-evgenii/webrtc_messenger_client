@@ -52,7 +52,13 @@ function joinWebRTC() {
       if (e.candidate) return;
       sdp_msg = JSON.stringify(pc.localDescription);
       console.log(sdp_msg);
-      sendMessage(sdp_msg, my_sender_data.key, app.frend.key);
+
+      msg = {
+        type: '',
+        sdp: sdp_msg
+      }
+
+      sendMessage(msg, my_sender_data.key, app.frend.key);
     }
     // join 3 изменение статуса 
     pc.oniceconnectionstatechange = async function(e) {
@@ -70,20 +76,22 @@ function joinWebRTC() {
 
 // join 5
 // type = 'chat'/'video'/'audio'
-async function createAnswerSDP(type, offerSDP) {
-  if (type == 'video' || type == 'audio') await mediaWebRTC(type);
-  joinWebRTC();
-  var offerDesc = new RTCSessionDescription(offerSDP);
-  pc.setRemoteDescription(offerDesc);
-  pc.createAnswer(function (answerDesc) {
-    pc.setLocalDescription(answerDesc)
-  }, function () {console.warn("Couldn't create offer")},
-  sdpConstraints);
+async function createAnswerSDP(offerSDP) {
+  if (await app.showWebrtcConnection(type)) {
+    if (type == 'video' || type == 'audio') await mediaWebRTC(type);
+    joinWebRTC();
+    var offerDesc = new RTCSessionDescription(offerSDP);
+    pc.setRemoteDescription(offerDesc);
+    pc.createAnswer(function (answerDesc) {
+      pc.setLocalDescription(answerDesc)
+    }, function () {console.warn("Couldn't create offer")},
+    sdpConstraints);
+  }
 }
 
 //----------offer--------------
 
-function offerWebRTC() {
+function offerWebRTC(type) {
   // offer 1 изменение статуса 
   pc.oniceconnectionstatechange = async function(e) {
     state = pc.iceConnectionState;
@@ -103,8 +111,15 @@ function offerWebRTC() {
     } 
     sdp_msg = JSON.stringify(pc.localDescription);
     console.log(sdp_msg);
+
+    msg = {
+      type: type,
+      sdp: sdp_msg
+    }
+
+    console.log(msg);
     
-    sendMessage(sdp_msg, my_sender_data.key, app.frend.key); // api
+    sendMessage(msg, my_sender_data.key, app.frend.key); // api
   }
 }
 
@@ -112,7 +127,7 @@ function offerWebRTC() {
 // type = 'chat'/'video'/'audio'
 async function createOfferSDP(type) {
   if (type == 'video' || type == 'audio') await mediaWebRTC(type);
-  offerWebRTC();
+  offerWebRTC(type);
   if (type == 'chat') dc = pc.createDataChannel("chat");
   pc.createOffer().then(function(e) {
     pc.setLocalDescription(e)

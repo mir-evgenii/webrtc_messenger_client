@@ -51,7 +51,9 @@ var app = new Vue({
       frendListVisible: true,
       widthMsgList: 9,
       isMobile:false,
-      updateInterval:5000 // частота обновления сообщений 5 сек
+      updateInterval:5000, // частота обновления сообщений 5 сек
+      boxWebrtcConnection:null, // разрешение от пользователя на соединение по webrtc
+      connectedFrendKey:null // ключ пользователя который подключается по webrtc
     },
     async created() {
         this.db = await getDb();
@@ -138,6 +140,38 @@ var app = new Vue({
       },
 
       // --------------- Metods ------------------------
+
+      showWebrtcConnection: async function (type) {
+        type_ru = 'Чат';
+        if (type == 'video') type_ru = 'Видео-звонок';
+        if (type == 'audio') type_ru = 'Звонок';
+        let frendInDB = false;
+        for (let i=0; i > frendsList.length; i++) {
+          if (frendsList[i]['key'] == this.connectedFrendKey) {
+            this.frend = frendsList[i];
+            frendInDB = true;
+          }
+        }
+        if (!frendInDB) return false;
+        this.$bvModal.msgBoxConfirm('Контакт {this.frend.name} сделал запрос на соедиенение по WebRTC.', {
+          title: type_ru,
+          buttonSize: 'lg',
+          okVariant: 'success',
+          okTitle: 'Соединиться',
+          cancelVariant: 'danger',
+          cancelTitle: 'Отклонить',
+          footerClass: 'p-2',
+          hideHeaderClose: false,
+          centered: true
+        })
+          .then(value => {
+            return value;
+          })
+          .catch(err => {
+            console.log('Error! WebRTC connect rejected. (showWebrtcConnection)');
+          })
+      },
+
         updateOnlineFrends: async function () {
           let frends = await getFrendsFromDb(this.db);
           let keys = [];
@@ -160,10 +194,13 @@ var app = new Vue({
         updateMsgs: async function () {
           let msgs = await getMessages(); // api
           if (msgs.length > 0) {
-            msgs = JSON.parse(msgs[0]['content'])
+            msgs = JSON.parse(msgs[0]['content']);
+            this.connectedFrendKey = msgs[0]['sender'];
             console.log(msgs);
-            if (msgs['type'] == 'offer') createAnswerSDP('video', msgs);
-            if (msgs['type'] == 'answer') start(msgs);
+            let type = msgs['type'];
+            let sdp = JSON.parse(msgs['sdp']);
+            if (sdp['type'] == 'offer') createAnswerSDP(type, sdp);
+            if (sdp['type'] == 'answer') start(sdp);
           }
           setTimeout(this.updateMsgs, this.updateInterval);
         },
