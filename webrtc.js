@@ -53,10 +53,10 @@ function joinWebRTC() {
       sdp_msg = JSON.stringify(pc.localDescription);
       console.log(sdp_msg);
 
-      msg = {
+      msg = JSON.stringify({
         type: '',
         sdp: sdp_msg
-      }
+      });
 
       sendMessage(msg, my_sender_data.key, app.frend.key);
     }
@@ -76,17 +76,19 @@ function joinWebRTC() {
 
 // join 5
 // type = 'chat'/'video'/'audio'
-async function createAnswerSDP(offerSDP) {
-  if (await app.showWebrtcConnection(type)) {
-    if (type == 'video' || type == 'audio') await mediaWebRTC(type);
-    joinWebRTC();
-    var offerDesc = new RTCSessionDescription(offerSDP);
-    pc.setRemoteDescription(offerDesc);
-    pc.createAnswer(function (answerDesc) {
-      pc.setLocalDescription(answerDesc)
-    }, function () {console.warn("Couldn't create offer")},
-    sdpConstraints);
-  }
+async function createAnswerSDP(type, offerSDP) {
+  await app.showWebrtcConnection(type, offerSDP); // main
+}
+
+async function createAnswerSDPRejected(type, offerSDP) {
+  if (type == 'video' || type == 'audio') await mediaWebRTC(type);
+  joinWebRTC();
+  var offerDesc = new RTCSessionDescription(offerSDP);
+  pc.setRemoteDescription(offerDesc);
+  pc.createAnswer(function (answerDesc) {
+    pc.setLocalDescription(answerDesc)
+  }, function () {console.warn("Couldn't create offer")},
+  sdpConstraints);
 }
 
 //----------offer--------------
@@ -112,10 +114,10 @@ function offerWebRTC(type) {
     sdp_msg = JSON.stringify(pc.localDescription);
     console.log(sdp_msg);
 
-    msg = {
+    msg = JSON.stringify({
       type: type,
       sdp: sdp_msg
-    }
+    });
 
     console.log(msg);
     

@@ -141,19 +141,23 @@ var app = new Vue({
 
       // --------------- Metods ------------------------
 
-      showWebrtcConnection: async function (type) {
-        type_ru = 'Чат';
+        tested: function() {
+          this.$bvModal.show('modal-video-call');
+        },
+
+      showWebrtcConnection: async function (type, offerSDP) {
+        let type_ru = 'Чат';
         if (type == 'video') type_ru = 'Видео-звонок';
         if (type == 'audio') type_ru = 'Звонок';
         let frendInDB = false;
-        for (let i=0; i > frendsList.length; i++) {
-          if (frendsList[i]['key'] == this.connectedFrendKey) {
-            this.frend = frendsList[i];
+        for (var i=0; i < this.frendsList.length; i++) {
+          if (this.frendsList[i]['key'] == this.connectedFrendKey) {
+            this.frend = this.frendsList[i];
             frendInDB = true;
           }
         }
         if (!frendInDB) return false;
-        this.$bvModal.msgBoxConfirm('Контакт {this.frend.name} сделал запрос на соедиенение по WebRTC.', {
+        this.$bvModal.msgBoxConfirm('Контакт ' + this.frend.name + ' сделал запрос на соедиенение по WebRTC.', {
           title: type_ru,
           buttonSize: 'lg',
           okVariant: 'success',
@@ -165,6 +169,9 @@ var app = new Vue({
           centered: true
         })
           .then(value => {
+            createAnswerSDPRejected(type, offerSDP); // webrtc
+            if (type == 'video') this.$bvModal.show('modal-video-call');
+            if (type == 'audio') this.$bvModal.show('modal-call');
             return value;
           })
           .catch(err => {
@@ -194,11 +201,12 @@ var app = new Vue({
         updateMsgs: async function () {
           let msgs = await getMessages(); // api
           if (msgs.length > 0) {
-            msgs = JSON.parse(msgs[0]['content']);
-            this.connectedFrendKey = msgs[0]['sender'];
             console.log(msgs);
-            let type = msgs['type'];
-            let sdp = JSON.parse(msgs['sdp']);
+            let msg = JSON.parse(msgs[0]['content']);
+            this.connectedFrendKey = JSON.parse(msgs[0]['sender']);
+            console.log(msg);
+            let type = msg['type'];
+            let sdp = JSON.parse(msg['sdp']);
             if (sdp['type'] == 'offer') createAnswerSDP(type, sdp);
             if (sdp['type'] == 'answer') start(sdp);
           }
