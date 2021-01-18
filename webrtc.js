@@ -17,22 +17,32 @@ var sdp_msg; // SDP датаграмма
 //---------media--------------
 
 // type = 'video'/'audio'
-async function mediaWebRTC(type){
+async function mediaWebRTC(type, offerSDP = false, Reject = false){
+  console.log('1 mediaWebRTC');
   let constraints = {audio: true, video: true};
   if (type == 'audio') constraints = {audio: true, video: false};
 
   pc.ontrack = event => {
+    console.log('2 mediaWebRTC pc.ontrack');
     const stream = event.streams[0];
     if (!remoteVideo.srcObject || remoteVideo.srcObject.id !== stream.id) {
       remoteVideo.srcObject = stream;
     }
   };
+  
 
   navigator.mediaDevices.getUserMedia(constraints).then(stream => {
-    // Display your local video in #localVideo element
+    console.log('3 mediaWebRTC getUserMedia');
+    // Display your local video in #localVideo element 
     localVideo.srcObject = stream;
     // Add your stream to be sent to the conneting peer
     stream.getTracks().forEach(track => pc.addTrack(track, stream));
+    console.log('3 mediaWebRTC getUserMedia end ...');
+    if (Reject) {
+      createAnswerSDPRejected(type, offerSDP);
+    } else {
+      createOfferSDP(type);
+    }
   });
 }
 
@@ -80,8 +90,12 @@ async function createAnswerSDP(type, offerSDP) {
   await app.showWebrtcConnection(type, offerSDP); // main
 }
 
+function createAnswerSDPRejectedMedia(type, offerSDP) {
+  if (type == 'video' || type == 'audio') mediaWebRTC(type, offerSDP, true);
+}
+
 async function createAnswerSDPRejected(type, offerSDP) {
-  if (type == 'video' || type == 'audio') await mediaWebRTC(type);
+  //if (type == 'video' || type == 'audio') await mediaWebRTC(type);
   joinWebRTC();
   var offerDesc = new RTCSessionDescription(offerSDP);
   pc.setRemoteDescription(offerDesc);
@@ -94,8 +108,10 @@ async function createAnswerSDPRejected(type, offerSDP) {
 //----------offer--------------
 
 function offerWebRTC(type) {
+  console.log('5 offerWebRTC');
   // offer 1 изменение статуса 
   pc.oniceconnectionstatechange = async function(e) {
+    console.log('6 pc.oniceconnectionstatechange');
     state = pc.iceConnectionState;
     console.log(state);
     if (state == 'connected') {
@@ -108,6 +124,7 @@ function offerWebRTC(type) {
   }
   // offer 2 sdp датаграмма
   pc.onicecandidate = function(e) {
+    console.log('7 pc.onicecandidate');
     if (e.candidate) {
       return;
     } 
@@ -127,11 +144,17 @@ function offerWebRTC(type) {
 
 // offer 3
 // type = 'chat'/'video'/'audio'
+function createOfferSDPMedia(type) {
+  if (type == 'video' || type == 'audio') mediaWebRTC(type);
+}
+
 async function createOfferSDP(type) {
-  if (type == 'video' || type == 'audio') await mediaWebRTC(type);
+  //if (type == 'video' || type == 'audio') await mediaWebRTC(type);
+  console.log('4 createOfferSDP cont....');
   offerWebRTC(type);
   if (type == 'chat') dc = pc.createDataChannel("chat");
   pc.createOffer().then(function(e) {
+    console.log('8 createOffer');
     pc.setLocalDescription(e)
   });
   if (type == 'chat') {

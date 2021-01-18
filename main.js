@@ -169,7 +169,7 @@ var app = new Vue({
           centered: true
         })
           .then(value => {
-            createAnswerSDPRejected(type, offerSDP); // webrtc
+            createAnswerSDPRejectedMedia(type, offerSDP); // webrtc
             if (type == 'video') this.$bvModal.show('modal-video-call');
             if (type == 'audio') this.$bvModal.show('modal-call');
             return value;
