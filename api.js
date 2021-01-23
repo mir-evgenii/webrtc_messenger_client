@@ -6,16 +6,17 @@ let api_command = {
     "get_messages":         "/message/get"
 };
 
+let public_key = '678';
+
 let my_sender_data = {
     "title": "Msg Alise",
     "name": "Alise",
     "private_key": "alice_private_rsa_key_pass.pem",
     "secret_code": "***",
-    "key": "123"
+    "key": public_key
 }
 
 let server_host = 'http://localhost:8080';
-let public_key = '123';
 let secret_key = '';
 
 // обьявить серверу что клиент в сети

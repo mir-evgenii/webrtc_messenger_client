@@ -25,7 +25,7 @@ async function mediaWebRTC(type, offerSDP = false, Reject = false){
   pc.ontrack = event => {
     console.log('2 mediaWebRTC pc.ontrack');
     const stream = event.streams[0];
-    if (!remoteVideo.srcObject || remoteVideo.srcObject.id !== stream.id) {
+    if ((type == 'video') && (!remoteVideo.srcObject || remoteVideo.srcObject.id !== stream.id)) {
       remoteVideo.srcObject = stream;
     }
   };
@@ -33,8 +33,7 @@ async function mediaWebRTC(type, offerSDP = false, Reject = false){
 
   navigator.mediaDevices.getUserMedia(constraints).then(stream => {
     console.log('3 mediaWebRTC getUserMedia');
-    // Display your local video in #localVideo element 
-    localVideo.srcObject = stream;
+    if (type == 'video') localVideo.srcObject = stream; // Display your local video in #localVideo element
     // Add your stream to be sent to the conneting peer
     stream.getTracks().forEach(track => pc.addTrack(track, stream));
     console.log('3 mediaWebRTC getUserMedia end ...');

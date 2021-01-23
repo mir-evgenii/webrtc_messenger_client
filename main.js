@@ -169,9 +169,15 @@ var app = new Vue({
           centered: true
         })
           .then(value => {
-            createAnswerSDPRejectedMedia(type, offerSDP); // webrtc
-            if (type == 'video') this.$bvModal.show('modal-video-call');
-            if (type == 'audio') this.$bvModal.show('modal-call');
+            if (type == 'video') {
+              createAnswerSDPRejectedMedia(type, offerSDP);
+              this.$bvModal.show('modal-video-call');
+            }
+            if (type == 'audio') {
+              createAnswerSDPRejectedMedia(type, offerSDP);
+              this.$bvModal.show('modal-call');
+            }
+            if (type == 'chat') createAnswerSDPRejected(type, offerSDP);
             return value;
           })
           .catch(err => {
