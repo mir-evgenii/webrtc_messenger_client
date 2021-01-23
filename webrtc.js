@@ -18,6 +18,7 @@ var sdp_msg; // SDP датаграмма
 
 // type = 'video'/'audio'
 async function mediaWebRTC(type, offerSDP = false, Reject = false){
+
   console.log('1 mediaWebRTC');
   let constraints = {audio: true, video: true};
   if (type == 'audio') constraints = {audio: true, video: false};
@@ -34,6 +35,16 @@ async function mediaWebRTC(type, offerSDP = false, Reject = false){
   navigator.mediaDevices.getUserMedia(constraints).then(stream => {
     console.log('3 mediaWebRTC getUserMedia');
     if (type == 'video') localVideo.srcObject = stream; // Display your local video in #localVideo element
+    if (type == 'audio') {
+      const audio = document.querySelector('audio');
+      const audioTracks = stream.getAudioTracks();
+      console.log('Using audio device: ' + audioTracks[0].label);
+      stream.oninactive = function() {
+        console.log('Stream ended');
+      };
+      window.stream = stream;
+      audio.srcObject = stream;
+    }
     // Add your stream to be sent to the conneting peer
     stream.getTracks().forEach(track => pc.addTrack(track, stream));
     console.log('3 mediaWebRTC getUserMedia end ...');
