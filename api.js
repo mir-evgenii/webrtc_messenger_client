@@ -6,7 +6,7 @@ let api_command = {
     "get_messages":         "/message/get"
 };
 
-let public_key = '678';
+let public_key = '123';
 
 let my_sender_data = {
     "title": "Msg Alise",
@@ -104,4 +104,5 @@ function getFormatedDateTime() {
 // при закрытии вкладки с приложением выходим в офлайн
 window.addEventListener('beforeunload', async function (e) {
     await getOffline();
+    
   }, false);

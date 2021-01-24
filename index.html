@@ -116,41 +116,23 @@
         </b-modal>
 
         <!-- Modal call -->
-        <b-modal id="modal-call" size="xl" centered title="Звонок" hide-footer>
-            <b-row class="mb-2">
-                <b-col cols="5"></b-col>
-                <b-col cols="2"><h1><b-icon-person-circle></b-icon-person-circle></h1></b-col>
-                <b-col cols="5"></b-col>
-            </b-row>
-            <b-row class="mb-2">
-                <b-col cols="5"></b-col>
-                <b-col cols="2"><h1>{{ frend.name }}</h1></b-col>
-                <b-col cols="5"></b-col>
-                <audio id="gum-local" controls autoplay></audio>
-            </b-row>
-            <b-row class="mb-2">
-                <b-col cols="5"></b-col>
-                <b-col cols="2"><b-button pill variant="outline-danger" size="lg"><b-icon-telephone-x-fill></b-icon-telephone-x-fill></b-button></b-col>
-                <b-col cols="5"></b-col>
-            </b-row>
+        <b-modal id="modal-call" centered title="Звонок" hide-footer>
+            <h1 align="center"><b-icon-person-circle></b-icon-person-circle></h1>
+            <h1 align="center">{{ frend.name }}</h1>
+            <p align="center"><audio id="gum-local" controls autoplay></audio></p>
+            <p align="center"><b-button pill variant="outline-danger" size="lg"><b-icon-telephone-x-fill></b-icon-telephone-x-fill></p>
         </b-modal>
 
         <!-- Modal video-call -->
         <b-modal id="modal-video-call" size="xl" centered title="Видео звонок" hide-footer>
-            <b-row class="mb-2">
-                <b-col cols="5"></b-col>
-                <b-col cols="2"><h1>{{ frend.name }}</h1></b-col>
-                <b-col cols="5"></b-col>
-            </b-row>
-
-            <video id="localVideo" autoplay muted></video>
-            <video id="remoteVideo" autoplay></video>
-            
-            <b-row class="mb-2">
-                <b-col cols="5"></b-col>
-                <b-col cols="2"><b-button pill variant="outline-danger" size="lg"><b-icon-telephone-x-fill></b-icon-telephone-x-fill></b-button></b-col>
-                <b-col cols="5"></b-col>
-            </b-row>
+            <h1 align="center">{{ frend.name }}</h1>
+            <b-dropdown id="dropdown-text" text="Ваша камера" class="m-2">
+                <b-dropdown-text style="width: 240px;">
+                    <video style="width:100%;" id="localVideo" autoplay muted></video>
+                </b-dropdown-text>
+            </b-dropdown>
+            <video style="width:100%;" id="remoteVideo" autoplay></video>
+            <p align="center"><b-button pill variant="outline-danger" size="lg"><b-icon-telephone-x-fill></b-icon-telephone-x-fill></b-button></p>
         </b-modal>
 
         <!-- Nav bar mobile -->

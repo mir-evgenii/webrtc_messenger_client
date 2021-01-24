@@ -153,6 +153,7 @@ var app = new Vue({
         for (var i=0; i < this.frendsList.length; i++) {
           if (this.frendsList[i]['key'] == this.connectedFrendKey) {
             this.frend = this.frendsList[i];
+            this.msgs = await getMsgsFromDb(this.db, this.frend.name);
             frendInDB = true;
           }
         }
