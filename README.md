@@ -5,4 +5,4 @@ Supports video, calls, messages.
 Users remain anonymous by using public PGP keys instead of names.
 
 Demo:
-![demo gif](https://github.com/mir-evgenii/webrtc_messenger_client/demo/Demo.gif "Demo how to messeger works.")
+![demo gif](https://github.com/mir-evgenii/webrtc_messenger_client/blob/main/demo/Demo.gif "Demo how to messeger works.")
