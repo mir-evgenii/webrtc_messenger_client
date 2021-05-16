@@ -38,14 +38,14 @@
         <!-- Modal mobile menu -->
         <b-modal id="modal-menu" centered title="Меню" hide-footer>
         <b-container class="bv-example-row">
-            <b-button v-b-modal.modal-add-frend block>Добавить контакт</b-button>
-            <b-button v-if="frend" v-b-modal.modal-edit-frend block>Редактировать контакт</b-button>
-            <b-button v-if="frend" v-b-modal.modal-del-frend block>Удалить контакт</b-button>
-            <b-button v-if="frend" v-b-modal.modal-del-msgs block>Удалить диалог</b-button>
+            <b-button v-b-modal.modal-add-friend block>Добавить контакт</b-button>
+            <b-button v-if="friend" v-b-modal.modal-edit-friend block>Редактировать контакт</b-button>
+            <b-button v-if="friend" v-b-modal.modal-del-friend block>Удалить контакт</b-button>
+            <b-button v-if="friend" v-b-modal.modal-del-msgs block>Удалить диалог</b-button>
         </b-container>
         </b-modal>
         
-        <b-modal id="modal-add-frend" centered ok-only ok-title="Сохранить" ok-variant="success" title="Добавление контакта" @show="resetModal" @hidden="resetModal" @ok="handleOk">
+        <b-modal id="modal-add-friend" centered ok-only ok-title="Сохранить" ok-variant="success" title="Добавление контакта" @show="resetModal" @hidden="resetModal" @ok="handleOk">
             <form ref="form" @submit.stop.prevent="handleSubmit">
                 <b-form-group
                 :state="nameState"
@@ -77,7 +77,7 @@
             </form>
         </b-modal>
 
-        <b-modal id="modal-edit-frend" centered ok-only ok-title="Сохранить" ok-variant="success" title="Редактировать контакт" @show="resetModal" @hidden="resetModal" @ok="handleEdit">
+        <b-modal id="modal-edit-friend" centered ok-only ok-title="Сохранить" ok-variant="success" title="Редактировать контакт" @show="resetModal" @hidden="resetModal" @ok="handleEdit">
             <form ref="form" @submit.stop.prevent="handleSubmit">
                 <b-form-group
                 :state="nameState"
@@ -87,7 +87,7 @@
                 >
                 <b-form-input
                     id="name-input"
-                    v-model="frend.name"
+                    v-model="friend.name"
                     :state="nameState"
                     required
                 ></b-form-input>
@@ -99,7 +99,7 @@
                 >
                 <b-form-input
                     id="key-input"
-                    v-model="frend.key"
+                    v-model="friend.key"
                     :state="keyState"
                     required
                 ></b-form-input>
@@ -107,25 +107,25 @@
             </form>
         </b-modal>
 
-        <b-modal id="modal-del-frend" ok-only ok-title="Удалить" ok-variant="danger" centered title="Удаление контакта" @ok="handleDel">
-            <p class="my-4">Удалить контакт {{ frend.name }}?</p>
+        <b-modal id="modal-del-friend" ok-only ok-title="Удалить" ok-variant="danger" centered title="Удаление контакта" @ok="handleDel">
+            <p class="my-4">Удалить контакт {{ friend.name }}?</p>
         </b-modal>
 
         <b-modal id="modal-del-msgs" ok-only ok-title="Удалить" ok-variant="danger" centered title="Удаление диалога" @ok="handleDelAllMsg">
-            <p class="my-4">Удалить диалог с {{ frend.name }}?</p>
+            <p class="my-4">Удалить диалог с {{ friend.name }}?</p>
         </b-modal>
 
         <!-- Modal call -->
         <b-modal id="modal-call" centered title="Звонок" hide-footer>
             <h1 align="center"><b-icon-person-circle></b-icon-person-circle></h1>
-            <h1 align="center">{{ frend.name }}</h1>
+            <h1 align="center">{{ friend.name }}</h1>
             <p align="center"><audio id="gum-local" controls autoplay></audio></p>
             <p align="center"><b-button pill variant="outline-danger" size="lg"><b-icon-telephone-x-fill></b-icon-telephone-x-fill></p>
         </b-modal>
 
         <!-- Modal video-call -->
         <b-modal id="modal-video-call" size="xl" centered title="Видео звонок" hide-footer>
-            <h1 align="center">{{ frend.name }}</h1>
+            <h1 align="center">{{ friend.name }}</h1>
             <b-dropdown id="dropdown-text" text="Ваша камера" class="m-2">
                 <b-dropdown-text style="width: 240px;">
                     <video style="width:100%;" id="localVideo" autoplay muted></video>
@@ -139,12 +139,12 @@
         <b-navbar v-if="isMobile" sticky="true">
             <b-navbar-nav>
                 <b-button-group>
-                <b-button v-if="frend" v-on:click="app.back()"><b-icon-arrow-left></b-icon-arrow-left></b-button>
-                <b-button v-if="!frend" v-b-modal.modal-add-frend><b-icon-person-plus-fill></b-icon-person-plus-fill></b-button>
-                <b-button v-if="frend" v-b-modal.modal-menu><b-icon-list></b-icon-list></b-button>
-                <b-button v-if="frend.status" v-on:click="createOfferSDP('chat')">WebRTC <b-icon-broadcast-pin v-if="frend.webrtc"></b-icon-broadcast-pin></b-button>
-                <b-button v-if="frend.status" v-b-modal.modal-call v-on:click="createOfferSDPMedia('audio')"><b-icon-telephone-fill></b-icon-telephone-fill></b-button>
-                <b-button v-if="frend.status" v-b-modal.modal-video-call v-on:click="createOfferSDPMedia('video')"><b-icon-camera-reels-fill></b-icon-camera-reels-fill></b-button>
+                <b-button v-if="friend" v-on:click="app.back()"><b-icon-arrow-left></b-icon-arrow-left></b-button>
+                <b-button v-if="!friend" v-b-modal.modal-add-friend><b-icon-person-plus-fill></b-icon-person-plus-fill></b-button>
+                <b-button v-if="friend" v-b-modal.modal-menu><b-icon-list></b-icon-list></b-button>
+                <b-button v-if="friend.status" v-on:click="createOfferSDP('chat')">WebRTC <b-icon-broadcast-pin v-if="friend.webrtc"></b-icon-broadcast-pin></b-button>
+                <b-button v-if="friend.status" v-b-modal.modal-call v-on:click="createOfferSDPMedia('audio')"><b-icon-telephone-fill></b-icon-telephone-fill></b-button>
+                <b-button v-if="friend.status" v-b-modal.modal-video-call v-on:click="createOfferSDPMedia('video')"><b-icon-camera-reels-fill></b-icon-camera-reels-fill></b-button>
                 </b-button-group>
             </b-navbar-nav>
         </b-navbar>
@@ -153,14 +153,14 @@
         <b-navbar v-else sticky="true" class="w-100" type="light" variant="light">
             <b-navbar-nav>
                 <b-button-group>
-                <b-button v-on:click="app.frendList()"><b-icon-people-fill></b-icon-people-fill></b-button>
-                <b-button v-b-modal.modal-add-frend><b-icon-person-plus-fill></b-icon-person-plus-fill></b-button>
-                <b-button v-if="frend" v-b-modal.modal-edit-frend><b-icon-person-lines-fill></b-icon-person-lines-fill></b-button>
-                <b-button v-if="frend" v-b-modal.modal-del-frend><b-icon-person-x-fill></b-icon-person-x-fill></b-button>
-                <b-button v-if="frend" v-b-modal.modal-del-msgs><b-icon-trash-fill></b-icon-trash-fill></b-button>
-                <b-button v-if="frend.status" v-on:click="createOfferSDP('chat')">WebRTC <b-icon-broadcast-pin v-if="frend.webrtc"></b-icon-broadcast-pin></b-button>
-                <b-button v-if="frend.status" v-b-modal.modal-call v-on:click="createOfferSDPMedia('audio')"><b-icon-telephone-fill></b-icon-telephone-fill></b-button>
-                <b-button v-if="frend.status" v-b-modal.modal-video-call v-on:click="createOfferSDPMedia('video')"><b-icon-camera-reels-fill></b-icon-camera-reels-fill></b-button>
+                <b-button v-on:click="app.friendList()"><b-icon-people-fill></b-icon-people-fill></b-button>
+                <b-button v-b-modal.modal-add-friend><b-icon-person-plus-fill></b-icon-person-plus-fill></b-button>
+                <b-button v-if="friend" v-b-modal.modal-edit-friend><b-icon-person-lines-fill></b-icon-person-lines-fill></b-button>
+                <b-button v-if="friend" v-b-modal.modal-del-friend><b-icon-person-x-fill></b-icon-person-x-fill></b-button>
+                <b-button v-if="friend" v-b-modal.modal-del-msgs><b-icon-trash-fill></b-icon-trash-fill></b-button>
+                <b-button v-if="friend.status" v-on:click="createOfferSDP('chat')">WebRTC <b-icon-broadcast-pin v-if="friend.webrtc"></b-icon-broadcast-pin></b-button>
+                <b-button v-if="friend.status" v-b-modal.modal-call v-on:click="createOfferSDPMedia('audio')"><b-icon-telephone-fill></b-icon-telephone-fill></b-button>
+                <b-button v-if="friend.status" v-b-modal.modal-video-call v-on:click="createOfferSDPMedia('video')"><b-icon-camera-reels-fill></b-icon-camera-reels-fill></b-button>
                 </b-button-group>
             </b-navbar-nav>
         </b-navbar>
@@ -168,7 +168,7 @@
     <b-row v-if="isMobile" class="mb-2">
             <!-- Msg List -->
             <b-col cols="12">
-            <div v-if="frend" class="mt-2 mb-2">
+            <div v-if="friend" class="mt-2 mb-2">
                 <msg-list 
                     v-for="item in msgs" 
                     v-bind:msg="item"
@@ -177,32 +177,32 @@
             </div>       
             <!-- Start msg -->
             <div v-else>
-                <frend-list
+                <friend-list
                     class="mt-2 mb-2"
-                    v-for="item in frendsList" 
-                    v-bind:frend="item"
+                    v-for="item in friendsList" 
+                    v-bind:friend="item"
                     v-bind:key="item.id">
-                </frend-list>             
+                </friend-list>             
             </div>
             </b-col>
     </b-row>
 
     <b-row v-else class="mb-2">
 
-        <!-- Frend List -->
-        <b-col v-if="frendListVisible" cols="3">
-            <frend-list 
-                v-for="item in frendsList" 
-                v-bind:frend="item"
+        <!-- friend List -->
+        <b-col v-if="friendListVisible" cols="3">
+            <friend-list 
+                v-for="item in friendsList" 
+                v-bind:friend="item"
                 v-bind:key="item.id">
-            </frend-list>
+            </friend-list>
         </b-col>
 
         <div></div>
 
         <!-- Msg List -->
         <b-col cols="9">
-        <div v-if="frend">
+        <div v-if="friend">
             <msg-list 
                 v-for="item in msgs" 
                 v-bind:msg="item"
@@ -235,7 +235,7 @@
 
 
     <!-- Msg form -->
-    <div v-if="frend">
+    <div v-if="friend">
 
         <!-- Msg form for mobile -->
         <b-container v-if="isMobile">
@@ -243,7 +243,7 @@
                 <b-col cols="10">
                     <b-form-input
                         id="textarea"
-                        v-bind:placeholder="frend.name"
+                        v-bind:placeholder="friend.name"
                         v-model="sendMsgText"
                         rows="1"
                         max-rows="10"
@@ -263,7 +263,7 @@
                 <b-col cols="5">
                     <b-form-input
                         id="textarea"
-                        v-bind:placeholder="frend.name"
+                        v-bind:placeholder="friend.name"
                         v-model="sendMsgText"
                         rows="1"
                         max-rows="10"

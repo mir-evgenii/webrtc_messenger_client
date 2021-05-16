@@ -47,7 +47,7 @@ async function getOffline() {
 
 // получить список друзей в сети
 // keys - список открытых ключей друзей
-async function getOnlineFrends(keys) {
+async function getOnlinefriends(keys) {
     let url = server_host + api_command.get_online_clients + "?keys=" + keys;
     let response = await sendRequest(url);
     let json = JSON.parse(response);

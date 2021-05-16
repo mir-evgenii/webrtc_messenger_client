@@ -4,14 +4,14 @@ const DB_VERSION = 1;
 
 const MY_NAME = 'I am';
 
-Vue.component('frend-list', {
-    props: ['frend'],
-    template: '<b-button v-if="frend.status" v-on:click="app.getMsgsFrom(frend)" block>{{ frend.name }} <b-icon-broadcast-pin v-if="frend.webrtc"></b-icon-broadcast-pin></b-button><b-button v-else v-on:click="app.getMsgsFrom(frend)" variant="outline-secondary" block>{{ frend.name }}</b-button>'
+Vue.component('friend-list', {
+    props: ['friend'],
+    template: '<b-button v-if="friend.status" v-on:click="app.getMsgsFrom(friend)" block>{{ friend.name }} <b-icon-broadcast-pin v-if="friend.webrtc"></b-icon-broadcast-pin></b-button><b-button v-else v-on:click="app.getMsgsFrom(friend)" variant="outline-secondary" block>{{ friend.name }}</b-button>'
 })
 
-Vue.component('frend-list-dropdown', {
-  props: ['frend'],
-  template: '<b-dropdown-item v-on:click="app.getMsgsFrom(frend)">{{ frend.name }}<b-dropdown-item>'
+Vue.component('friend-list-dropdown', {
+  props: ['friend'],
+  template: '<b-dropdown-item v-on:click="app.getMsgsFrom(friend)">{{ friend.name }}<b-dropdown-item>'
 })
 
 Vue.component('msg-list', {
@@ -28,51 +28,44 @@ var app = new Vue({
     el: '#app',
     data: {
       message: 'WEB-RTC msg in Vue!',
-      frendsList: [],
+      friendsList: [],
       msgs: [],
       sendMsgText: '',
       db:null,
       webrtc: [false, ''],
-
       showDismissibleAlert: true,
-
-      // frend name
-      name:'',
+      name:'', // friend name
       nameState: null,
-
-      // frend public RSA key
-      key:'',
+      key:'', // friend public RSA key
       keyState: null,
-
       ready:false,
       addDisabled:false,
-      frend:false,
-      frendId:false,
-      frendListVisible: true,
+      friend:false,
+      friendId:false,
+      friendListVisible: true,
       widthMsgList: 9,
       isMobile:false,
       updateInterval:5000, // частота обновления сообщений 5 сек
       boxWebrtcConnection:null, // разрешение от пользователя на соединение по webrtc
-      connectedFrendKey:null // ключ пользователя который подключается по webrtc
+      connectedfriendKey:null // ключ пользователя который подключается по webrtc
     },
     async created() {
         this.db = await getDb();
-        this.frendsList = await getFrendsFromDb(this.db);
+        this.friendsList = await getfriendsFromDb(this.db);
         this.ready = true;
-        //this.isMobile = false;
         this.brouser = false;
         this.detectDevice();
 
         if (getOnline()) { // обновление сообщений // getOnline - api
           await this.updateMsgs();
-          await this.updateOnlineFrends();
+          await this.updateOnlinefriends();
         } 
     },
     methods: {
 
-      frendList() {
-        this.frendListVisible = !this.frendListVisible;
-        this.widthMsgList = this.frendListVisible ? 9 : 12;
+      friendList() {
+        this.friendListVisible = !this.friendListVisible;
+        this.widthMsgList = this.friendListVisible ? 9 : 12;
       },
 
       detectDevice() {
@@ -80,14 +73,9 @@ var app = new Vue({
         if (detect.phone()) {
           this.isMobile = true;
         }
-        // console.log("Mobile: " + detect.mobile());       // телефон или планшет 
-        // console.log("Phone: " + detect.phone());         // телефон 
-        // console.log("Tablet: " + detect.tablet());       // планшет 
-        // console.log("OS: " + detect.os());               // операционная система 
-        // console.log("userAgent: " + detect.userAgent()); // userAgent
       },
 
-      // -------------- Add frends metods ----------------------
+      // -------------- Add friends metods ----------------------
 
       checkFormValidity() {
         const valid = this.$refs.form.checkValidity()
@@ -109,24 +97,24 @@ var app = new Vue({
         if (!this.checkFormValidity()) {
           return
         }
-        this.addFrend(this.name, this.key);
+        this.addfriend(this.name, this.key);
         this.key = '';
         this.$nextTick(() => {
-          this.$bvModal.hide('modal-add-frend')
+          this.$bvModal.hide('modal-add-friend')
         })
       },
 
-      // -------------- del frend ------------
+      // -------------- del friend ------------
 
       handleDel() {
-        this.deleteFrend(this.frend.id);
-        this.frend = false;
+        this.deletefriend(this.friend.id);
+        this.friend = false;
       },
 
-      // --------------- edit frend -------------------
+      // --------------- edit friend -------------------
 
       handleEdit() {
-        this.editFrend(this.frend);
+        this.editfriend(this.friend);
       },
 
       // --------------- del all msg -------------------
@@ -149,16 +137,16 @@ var app = new Vue({
         let type_ru = 'Чат';
         if (type == 'video') type_ru = 'Видео-звонок';
         if (type == 'audio') type_ru = 'Звонок';
-        let frendInDB = false;
-        for (var i=0; i < this.frendsList.length; i++) {
-          if (this.frendsList[i]['key'] == this.connectedFrendKey) {
-            this.frend = this.frendsList[i];
-            this.msgs = await getMsgsFromDb(this.db, this.frend.name);
-            frendInDB = true;
+        let friendInDB = false;
+        for (var i=0; i < this.friendsList.length; i++) {
+          if (this.friendsList[i]['key'] == this.connectedfriendKey) {
+            this.friend = this.friendsList[i];
+            this.msgs = await getMsgsFromDb(this.db, this.friend.name);
+            friendInDB = true;
           }
         }
-        if (!frendInDB) return false;
-        this.$bvModal.msgBoxConfirm('Контакт ' + this.frend.name + ' сделал запрос на соедиенение по WebRTC.', {
+        if (!friendInDB) return false;
+        this.$bvModal.msgBoxConfirm('Контакт ' + this.friend.name + ' сделал запрос на соедиенение по WebRTC.', {
           title: type_ru,
           buttonSize: 'lg',
           okVariant: 'success',
@@ -186,23 +174,23 @@ var app = new Vue({
           })
       },
 
-        updateOnlineFrends: async function () {
-          let frends = await getFrendsFromDb(this.db);
+        updateOnlinefriends: async function () {
+          let friends = await getfriendsFromDb(this.db);
           let keys = [];
-          for (let i = 0; i < frends.length; i++) {
-            keys.push(frends[i]['key']);
+          for (let i = 0; i < friends.length; i++) {
+            keys.push(friends[i]['key']);
           }
-          let onlineFrends = await getOnlineFrends(keys.join(';'));
-          for (let i = 0; i < frends.length; i++) {
-            if (onlineFrends.indexOf(frends[i]['key']) > -1) {
-              frends[i]['status'] = 1; // онлайн
-              await this.editFrend(frends[i]);
+          let onlinefriends = await getOnlinefriends(keys.join(';'));
+          for (let i = 0; i < friends.length; i++) {
+            if (onlinefriends.indexOf(friends[i]['key']) > -1) {
+              friends[i]['status'] = 1; // онлайн
+              await this.editfriend(friends[i]);
             } else {
-              frends[i]['status'] = 0; // офлайн
-              await this.editFrend(frends[i]);
+              friends[i]['status'] = 0; // офлайн
+              await this.editfriend(friends[i]);
             }
           }
-          setTimeout(this.updateOnlineFrends, this.updateInterval);
+          setTimeout(this.updateOnlinefriends, this.updateInterval);
         },
 
         updateMsgs: async function () {
@@ -210,7 +198,7 @@ var app = new Vue({
           if (msgs.length > 0) {
             console.log(msgs);
             let msg = JSON.parse(msgs[0]['content']);
-            this.connectedFrendKey = JSON.parse(msgs[0]['sender']);
+            this.connectedfriendKey = JSON.parse(msgs[0]['sender']);
             console.log(msg);
             let type = msg['type'];
             let sdp = JSON.parse(msg['sdp']);
@@ -221,49 +209,49 @@ var app = new Vue({
         },
 
         sendMsg: async function () {
-          this.addMsg(this.sendMsgText, 'I am', this.frend.name);
+          this.addMsg(this.sendMsgText, 'I am', this.friend.name);
           sendMsgWebRtc(this.sendMsgText); // отправка сообщения по WebRTC
           this.sendMsgText = '';
-          this.msgs = await getMsgsFromDb(this.db, this.frend.name);
+          this.msgs = await getMsgsFromDb(this.db, this.friend.name);
         },
 
-        getFrend: async function() {
-          this.getFrendFromDb(this.frend.id);
+        getfriend: async function() {
+          this.getfriendFromDb(this.friend.id);
         },
 
         back: function() {
-          this.frend = false;
+          this.friend = false;
         },
 
-        getMsgsFrom: async function (frend) {            
-            this.frend = frend;
-            this.msgs = await getMsgsFromDb(this.db, this.frend.name);
+        getMsgsFrom: async function (friend) {            
+            this.friend = friend;
+            this.msgs = await getMsgsFromDb(this.db, this.friend.name);
         },
 
         // ------------------- Работа с БД -------------------------
 
-          async addFrend(name, key) {
+          async addfriend(name, key) {
             this.addDisabled = true;
-            let frend = {
+            let friend = {
               name: name,
               key: key
             };
-            console.log('Add frend to DB: '+JSON.stringify(frend));
-            await addFrendToDb(this.db, frend);
-            this.frendsList = await getFrendsFromDb(this.db);
+            console.log('Add friend to DB: '+JSON.stringify(friend));
+            await addfriendToDb(this.db, friend);
+            this.friendsList = await getfriendsFromDb(this.db);
             this.addDisabled = false;      
           },
 
-          async editFrend(frend) {
+          async editfriend(friend) {
             this.addDisabled = true;
-            await addFrendToDb(this.db, frend);
-            this.frendsList = await getFrendsFromDb(this.db);
+            await addfriendToDb(this.db, friend);
+            this.friendsList = await getfriendsFromDb(this.db);
             this.addDisabled = false;
           },
 
-          async deleteFrend(id) {
-            await deleteFrendFromDb(this.db, id);
-            this.frendsList = await getFrendsFromDb(this.db);      
+          async deletefriend(id) {
+            await deletefriendFromDb(this.db, id);
+            this.friendsList = await getfriendsFromDb(this.db);      
           },
 
           async addMsg(text, from, to) {
@@ -277,13 +265,13 @@ var app = new Vue({
             };
             console.log('Add msg to DB: '+JSON.stringify(msg));
             await addMsgToDb(this.db, msg);
-            this.msgs = await getMsgsFromDb(this.db, this.frend.name);
+            this.msgs = await getMsgsFromDb(this.db, this.friend.name);
             this.addDisabled = false;      
           },
 
           async deleteMsg(id) {
             await deleteMsgFromDb(this.db, id);
-            this.msgs = await getMsgsFromDb(this.db, this.frend.name);      
+            this.msgs = await getMsgsFromDb(this.db, this.friend.name);      
           },
     }
 })

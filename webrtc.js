@@ -61,7 +61,7 @@ async function mediaWebRTC(type, offerSDP = false, Reject = false){
 // join 4
 function dcInit(dc) {
   dc.onopen    = function()  {console.log("Conected!")};
-  dc.onmessage = function(e) {if (e.data) console.log(e.data); app.addMsg(e.data, app.frend.name, 'I am');}
+  dc.onmessage = function(e) {if (e.data) console.log(e.data); app.addMsg(e.data, app.friend.name, 'I am');}
 }
 
 function joinWebRTC() {
@@ -78,18 +78,18 @@ function joinWebRTC() {
         sdp: sdp_msg
       });
 
-      sendMessage(msg, my_sender_data.key, app.frend.key);
+      sendMessage(msg, my_sender_data.key, app.friend.key);
     }
     // join 3 изменение статуса 
     pc.oniceconnectionstatechange = async function(e) {
       state = pc.iceConnectionState;
       console.log(state);
       if (state == 'connected') {
-        app.frend['webrtc'] = 1;
-        await app.editFrend(app.frend);
+        app.friend['webrtc'] = 1;
+        await app.editfriend(app.friend);
       } else {
-        app.frend['webrtc'] = 0;
-        await app.editFrend(app.frend);
+        app.friend['webrtc'] = 0;
+        await app.editfriend(app.friend);
       }
     }
 }
@@ -125,11 +125,11 @@ function offerWebRTC(type) {
     state = pc.iceConnectionState;
     console.log(state);
     if (state == 'connected') {
-      app.frend['webrtc'] = 1;
-      await app.editFrend(app.frend);
+      app.friend['webrtc'] = 1;
+      await app.editfriend(app.friend);
     } else {
-      app.frend['webrtc'] = 0;
-      await app.editFrend(app.frend);
+      app.friend['webrtc'] = 0;
+      await app.editfriend(app.friend);
     }
   }
   // offer 2 sdp датаграмма
@@ -148,7 +148,7 @@ function offerWebRTC(type) {
 
     console.log(msg);
     
-    sendMessage(msg, my_sender_data.key, app.frend.key); // api
+    sendMessage(msg, my_sender_data.key, app.friend.key); // api
   }
 }
 
@@ -169,7 +169,7 @@ async function createOfferSDP(type) {
   });
   if (type == 'chat') {
     dc.onmessage = function(e) {
-      if (e.data) console.log(e.data); app.addMsg(e.data, app.frend.name, 'I am'); //TODO добавление сообщения //addMSG(e.data, "other");
+      if (e.data) console.log(e.data); app.addMsg(e.data, app.friend.name, 'I am'); //TODO добавление сообщения //addMSG(e.data, "other");
     }
   }
 }
